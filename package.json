@@ -1,0 +1,23 @@
+{
+	"name": "Battleship",
+	"version": "1.0.0",
+	"description": "Battleship board game is a 2 players game where each player trys to sink all opponent's ships",
+	"main": "app.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/pedroagrodrigues/Battleship-Board-Game.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/pedroagrodrigues/Battleship-Board-Game/issues"
+	},
+	"homepage": "https://github.com/pedroagrodrigues/Battleship-Board-Game#readme",
+	"dependencies": {
+		"express": "^4.17.1"
+	}
+}
