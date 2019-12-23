@@ -6,10 +6,15 @@
 
 <div align='justify'>
 
+## System requirements
+- node.js
+- mysql server  
+
 ## Installing
 
-Run **_npm install_** before starting the _server_ with ___node server.js___.
+To setup everything run  **_npm install_**. 
 
+Check the server.js configurations then run the _server_ with ___node server.js___.
 
 ## The game
 
