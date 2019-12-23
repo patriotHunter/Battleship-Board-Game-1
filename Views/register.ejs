@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <title>Battleship - Login</title>
+</head>
+<body>
+    <div class='authentication-wrapper'>
+        <form action="/register" class="form-authentication" method="POST">
+            <div class="form-inputs">
+                <h1>Battleship</h1>
+                <h2 class="quote">Prepare to fire!</h2>
+                <div class="form-inputs-with-icons">
+                    <div class="input-with-icon">
+                        <div class="icon">&#xf003;</div>
+                        <div class="input-field-controler">
+                            <div class="input-field-div">
+                                <input class="input-field" type="text" name="email" placeholder="Email" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-with-icon">
+                        <div class="icon">&#xf2c0</div>
+                        <div class="input-field-controler">
+                            <div class="input-field-div">
+                                <input class="input-field" type="text" name="username" placeholder="Username" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-with-icon">
+                        <div class="icon">&#xf023</div>
+                        <div class="input-field-controler">
+                            <div class="input-field-div">
+                                <input class="input-field" type="password" name="password" placeholder="Password" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-with-icon">
+                        <div class="icon">&#xf023</div>
+                        <div class="input-field-controler">
+                            <div class="input-field-div">
+                                <input class="input-field" type="password" name="confirmPassword" placeholder="Confirm Password" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="form-submit" value="Submit">Join UChoose</button>
+        </form>
+        <div class="bottom-wrapper">
+            <p>Already a member? <a href="/login">Sign in!</a></p>
+            <p>Changed your mind? <a href="/">Go Back!</a></p>
+
+        </div>
+        
+    </div>
+</body>

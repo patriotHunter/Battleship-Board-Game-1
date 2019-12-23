@@ -16,15 +16,17 @@ const SERVER = HTTP.Server(APP);
 const IO = SOCKET_IO(SERVER);
 const MYSQL = require('mysql');
 
+// --- Communication ---
+
 // ------ Routes ------
-APP.get('/', function(req, res) {
-	res.render('index');
-});
+APP.get('/', (req, res) => res.render('index'));
+APP.get('/login', (req, res) => res.render('login'));
+APP.get('/register', (req, res) => res.render('register'));
 
 // ------ Server ------
-
 APP.set('view engine', 'ejs');
 APP.set('views', __dirname + '/Views');
+APP.use(EXPRESS.static(__dirname + '/public'));
 
 SERVER.listen(PORT, function() {
 	console.log('First ship has sailed on port: ' + PORT);
@@ -39,7 +41,7 @@ var connection = MYSQL.createConnection({
 	password: DB_PASSWORD
 });
 
-function startDatabase() {
+function checkDatabase() {
 	connection.connect(function(error) {
 		if (error) throw error;
 		console.log('Connection to database established.');
@@ -59,4 +61,4 @@ function startDatabase() {
 	});
 }
 
-startDatabase();
+checkDatabase();
