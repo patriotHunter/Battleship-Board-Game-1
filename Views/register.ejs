@@ -11,16 +11,24 @@
 </head>
 <body>
     <div class='authentication-wrapper'>
-        <form action="." class="form-authentication" method="POST">
+        <form action="/register" class="form-authentication" method="POST">
             <div class="form-inputs">
                 <h1>Battleship</h1>
-                <h2 class="quote">Let the war begin!</h2>
+                <h2 class="quote">Prepare to fire!</h2>
                 <div class="form-inputs-with-icons">
                     <div class="input-with-icon">
                         <div class="icon">&#xf003;</div>
                         <div class="input-field-controler">
                             <div class="input-field-div">
                                 <input class="input-field" type="text" name="email" placeholder="Email" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-with-icon">
+                        <div class="icon">&#xf2c0</div>
+                        <div class="input-field-controler">
+                            <div class="input-field-div">
+                                <input class="input-field" type="text" name="username" placeholder="Username" required>
                             </div>
                         </div>
                     </div>
@@ -32,16 +40,23 @@
                             </div>
                         </div>
                     </div>
+                    <div class="input-with-icon">
+                        <div class="icon">&#xf023</div>
+                        <div class="input-field-controler">
+                            <div class="input-field-div">
+                                <input class="input-field" type="password" name="confirmPassword" placeholder="Confirm Password" required>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <button class="form-submit" value="Submit">Sign in</button>
+            <button class="form-submit" value="Submit">Join UChoose</button>
         </form>
-        
         <div class="bottom-wrapper">
-            <p>Don't have an account? <a href="/register">Create one!</a></p>
+            <p>Already a member? <a href="/login">Sign in!</a></p>
             <p>Changed your mind? <a href="/">Go Back!</a></p>
+
         </div>
         
     </div>
 </body>
-</html>

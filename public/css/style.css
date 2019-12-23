@@ -193,29 +193,6 @@ body {
 .fa:active{
 	opacity: 1;
 }
-  
-  /*ICONS*/
- .fa-user{ 
-	content:"\f007";
- }
-
-.fa-lock{
-	content:"\f023";
-}
-/* Twitter */
-.fa-twitter {
-	background: #55ACEE;
-}
-	
-/* Facebook */
-.fa-facebook {
-	background: #3B5998;
-}
-	
-/* Google */
-.fa-google {
-	background: #dd4b39;
-}
 
 .bottom-wrapper{
 	background-color: #fff;
@@ -229,3 +206,4 @@ body {
 	color: red;
 	text-decoration: none;
 }
+
