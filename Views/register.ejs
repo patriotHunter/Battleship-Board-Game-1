@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('head') %>
+    <script src="js/register.js"></script>
+    <title>Battleship - Login</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+    <div class='authentication-wrapper'>
+        <div class="form-authentication">
+            <div class="form-inputs">
+                <h1>Battleship</h1>
+                <h2 class="quote">Prepare to fire!</h2>
+                <div class="form-inputs-with-icons">
+                    <div class="input-with-icon">
+                        <div class="icon">&#xf003;</div>
+                        <div class="input-field-controler">
+                            <div class="input-field-div">
+                                <input class="input-field" type="text" id="email" placeholder="Email">
+                            </div>
+                            <div id="email-mandatory" class="mandatory"></div>
+                        </div>
+                    </div>
+                    <div class="input-with-icon">
+                        <div class="icon">&#xf2c0</div>
+                        <div class="input-field-controler">
+                            <div class="input-field-div">
+                                <input class="input-field" type="text" id="username" placeholder="Username">
+                            </div>
+                            <div id="username-mandatory" class="mandatory"></div>
+                        </div>
+                    </div>
+                    <div class="input-with-icon">
+                        <div class="icon">&#xf023</div>
+                        <div class="input-field-controler">
+                            <div class="input-field-div">
+                                <input class="input-field" type="password" id="password" placeholder="Password">
+                                <div id="password-mandatory" class="mandatory"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-with-icon">
+                        <div class="icon">&#xf023</div>
+                        <div class="input-field-controler">
+                            <div class="input-field-div">
+                                <input class="input-field" type="password" id="confirmPassword" placeholder="Confirm Password">
+                            </div>
+                            <div id="confirmPassword-mandatory" class="mandatory"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="form-submit" onclick="register()">To Battle!</button>
+        </div>
+        <div class="bottom-wrapper">
+            <p>Already a member? <a href="/login">Sign in!</a></p>
+            <p>Changed your mind? <a href="/">Go Back!</a></p>
+        </div>
+    </div>
+</body>
