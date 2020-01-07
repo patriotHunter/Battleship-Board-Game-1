@@ -1,0 +1,49 @@
+.checkButton {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  padding-left: 25px; }
+
+.light {
+  display: inline-block;
+  width: calc(calc(40px / 2) / 2);
+  height: calc(calc(40px / 2) / 2);
+  border-radius: 100%;
+  background-color: #FFF;
+  margin: 0 0 0 0.5rem;
+  transition: background 400ms ease; }
+
+input[type="checkbox"] {
+  position: relative;
+  -webkit-appearance: none;
+  width: 40px;
+  height: calc(40px / 2);
+  background-color: #FFF;
+  border-radius: calc(40px / 2);
+  outline: none;
+  transition: background 450ms ease;
+  box-shadow: 0 0 0 3px #ececec; }
+  input[type="checkbox"]:before, input[type="checkbox"]:after {
+    position: absolute;
+    display: block;
+    content: "";
+    border-radius: 100%;
+    transition: background 450ms ease, transform 450ms ease; }
+  input[type="checkbox"]:before {
+    width: calc(40px / 2);
+    height: calc(40px / 2);
+    background-color: #e53935; }
+  input[type="checkbox"]:checked:before {
+    background-color: #43a047;
+    transform: translateX(100%); }
+  input[type="checkbox"].knob {
+    transition: background 450ms ease, transform 450ms ease; }
+    input[type="checkbox"].knob:before {
+      background: conic-gradient(#e53935, #9f1815); }
+    input[type="checkbox"].knob:checked:before {
+      background: conic-gradient(#43a047, #255827);
+      transform: translateX(100%) rotate(360deg); }
+    input[type="checkbox"].knob:checked + .light {
+      background-color: #ffff00; }
+
+/*# sourceMappingURL=button.css.map */
