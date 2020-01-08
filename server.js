@@ -124,18 +124,15 @@ function register(query) {
 		if (error) console.log('Database not responding');
 	});
 
-	connection.query('USE ' + DB_NAME, function(error, result) {
-		if (error) console.log('cant reach database: ', error);
-	});
-
 	console.log('Inserting new user!');
 	connection.query(query, function(error, result) {
 		if (error) {
 			console.log('There was an error!!!!!');
 			console.log(error);
+			connection.end();
 		} else {
 			console.log('Insert sucessefull!');
-			console.log(result);
+			connection.end();
 		}
 	});
 
