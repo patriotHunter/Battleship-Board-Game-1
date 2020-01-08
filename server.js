@@ -16,32 +16,42 @@ const SERVER = HTTP.Server(APP);
 const IO = SOCKET_IO(SERVER);
 const MYSQL = require('mysql');
 const CRYPT = require('crypto-js/sha256');
+const PARSER = require('body-parser');
+
+// ------ Server ------
+APP.set('view engine', 'ejs');
+APP.set('views', __dirname + '/Views');
+APP.use(EXPRESS.static(__dirname + '/public'));
+APP.use(PARSER.urlencoded({ extended: false }));
+APP.use(PARSER.json());
+SERVER.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT));
 
 // --- Communication ---
-IO.on('connection', function(socket) {
-	socket.on('register', function(email, name, pass) {
-		register(
-			"INSERT INTO user (username, email, password) VALUES ('" +
-				name +
-				"', '" +
-				email +
-				"', '" +
-				CRYPT(pass) +
-				"')"
-		);
-	});
-});
+// IO.on('connection', function(socket) {
+// 	socket.on('register', function(email, name, pass) {
+// 		makeQuery(
+// 			"INSERT INTO user (username, email, password) VALUES ('" +
+// 				name +
+// 				"', '" +
+// 				email +
+// 				"', '" +
+// 				CRYPT(pass) +
+// 				"')"
+// 		);
+// 	});
+// });
 
 // ------ Routes ------
 APP.get('/', (req, res) => res.render('index'));
 APP.get('/login', (req, res) => res.render('login'));
 APP.get('/register', (req, res) => res.render('register'));
 
-// ------ Server ------
-APP.set('view engine', 'ejs');
-APP.set('views', __dirname + '/Views');
-APP.use(EXPRESS.static(__dirname + '/public'));
-SERVER.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT));
+APP.post('/register', function(req, res) {
+	var result = makeQuery(`Select * From user Where email = "${req.body.email}"`);
+	console.log(result);
+	// if (result.length > 0) res.send('taken');
+	// else res.send('avaliable');
+});
 
 // ------ Database ------
 
@@ -108,9 +118,9 @@ checkDatabase();
 
 // ------ Queries ------
 
-function register(query) {
+function makeQuery(query) {
 	database.query(query, function(error, result) {
 		if (error) console.log('There was an error: \n' + error);
-		else console.log('Register sucessfull!');
+		return result;
 	});
 }

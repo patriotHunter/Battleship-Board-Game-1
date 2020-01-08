@@ -1,4 +1,43 @@
-var socket;
+$('document').ready(function() {
+	var emailSet = false;
+	var usernameSet = false;
+	var passwordSet = false;
+	var passwrodMatch = false;
+	$('#email').on('blur', function() {
+		var email = $('#email').val();
+		if (email == '') {
+			emailSet = false;
+			$('#email-mandatory').css('display', 'block');
+			$('#email-mandatory').html('* This field is mandatory!');
+			return;
+		}
+		console.log(email);
+		$.ajax({
+			url: '/register',
+			type: 'POST',
+			data:{
+				email_check: 1,
+				email: email
+			},
+
+			sucess: function(response) {
+				if (response == 'taken') {
+					emailSet = false;
+					$('#email-mandatory').css('display', 'block');
+					$('#email-mandatory').html('* This email alredy exist!');
+				} else if (response == 'avaliable') {
+					emailSet = true;
+					$('#email-mandatory').css('display', 'block');
+					$('#email-mandatory').css('color', 'green');
+					$('#email-mandatory').html('This email is valid!');
+				}
+			}
+		});
+	});
+});
+
+//registo com socket.io
+/* var socket;
 
 $(document).ready(() => (socket = io()));
 
@@ -92,3 +131,4 @@ function checkEmail(mail) {
 	return false;
 }
 
+ */
