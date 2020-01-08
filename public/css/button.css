@@ -1,0 +1,59 @@
+.checkButton {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  padding-left: 25px;
+}
+
+.light {
+  display: inline-block;
+  width: calc(calc(40px / 2));
+  height: calc(calc(40px / 2));
+  background-image: url("/images/sunny.png");
+  background-size: contain;
+  margin: 0 0 0 0.5rem;
+  transition: background 400ms ease;
+}
+
+input[type=checkbox] {
+  position: relative;
+  -webkit-appearance: none;
+  width: 40px;
+  height: calc(40px / 2);
+  background-color: transparent;
+  border-radius: calc(40px / 2);
+  outline: none;
+  transition: background 450ms ease;
+  box-shadow: 0 0 0 3px #b7b7b7;
+}
+input[type=checkbox]:before, input[type=checkbox]:after {
+  position: absolute;
+  display: block;
+  content: "";
+  border-radius: 100%;
+  transition: background 450ms ease, transform 450ms ease;
+}
+input[type=checkbox]:before {
+  width: calc(40px / 2);
+  height: calc(40px / 2);
+  background-color: #636b6f;
+}
+input[type=checkbox]:checked:before {
+  background-color: #f5f5f7;
+  transform: translateX(100%);
+}
+input[type=checkbox].knob {
+  transition: background 450ms ease, transform 450ms ease;
+}
+input[type=checkbox].knob:before {
+  background: conic-gradient(#636b6f, #333739);
+}
+input[type=checkbox].knob:checked:before {
+  background: conic-gradient(#f5f5f7, #bcbcca);
+  transform: translateX(100%) rotate(360deg);
+}
+input[type=checkbox].knob:checked + .light {
+  background-image: url("/images/half-moon.png");
+}
+
+/*# sourceMappingURL=button.css.map */
