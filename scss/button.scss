@@ -1,13 +1,13 @@
-$input-bg-static: #FFF;
-$input-bg-pseudo-active: #43a047;
-$input-bg-pseudo-static: #e53935;
+$input-bg-static: rgb(202, 202, 202);
+$input-bg-pseudo-active: #f5f5f7;
+$input-bg-pseudo-static: #636b6f;
 $input-bg-light-active: #ffff00;
 
 $input-width: 40px; // adjust only this number for dimension
 
 $input-radius: calc(#{$input-width} / 2);
 $input-height: calc(#{$input-width} / 2);
-$input-light-dims: calc(#{$input-height} / 2);
+$input-light-dims: calc(#{$input-height});
 
 .checkButton {
 	height: 50px;
@@ -20,8 +20,8 @@ $input-light-dims: calc(#{$input-height} / 2);
 	display: inline-block;
 	width: $input-light-dims;
 	height: $input-light-dims;
-	border-radius: 100%;
-	background-color: $input-bg-static;
+	background-image: url('/images/sunny.png');
+	background-size: contain;
 	margin: 0 0 0 0.5rem;
 	transition: background 400ms ease;
 }
@@ -31,7 +31,7 @@ input[type="checkbox"] {
 	-webkit-appearance: none;
 	width: $input-width;
 	height: $input-height;
-	background-color: $input-bg-static;
+	background-color: transparent;
 	border-radius: $input-radius;
 	outline: none; // bad accessibility
 	transition: background 450ms ease;
@@ -75,7 +75,7 @@ input[type="checkbox"] {
 			}
 
 			+ .light {
-				background-color: $input-bg-light-active;
+				background-image: url('/images/half-moon.png');
 			}
 		}
 	}

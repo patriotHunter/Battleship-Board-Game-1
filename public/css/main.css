@@ -2,27 +2,31 @@ body {
 	margin: 0;
 }
 
-#banner {
+.banner {
 	height: 50px;
 	box-shadow: 0 3px 7px 0px rgba(0, 0, 0, 0.6);
 	width: 100%;
 	font-family: sans-serif;
 	border-radius: 3px;
+	background-color: #f5f5f7;
+	color: #636b6f;
+}
+.banner-dark-mode {
+	color: #f5f5f7;
 	background-color: #636b6f;
 }
 .banner-item {
 	display: flex;
-    margin: 0 50px 0 40px;
-    justify-content: space-between;
+	margin: 0 50px 0 40px;
+	justify-content: space-between;
 }
-.links{
-    display: -webkit-inline-box;
+.links {
+	display: -webkit-inline-box;
 }
-#banner-text {
+.banner-text {
 	padding-left: 10px;
 	font-size: large;
 	font-weight: bold;
-	color: #f5f5f7;
 	text-decoration: none;
 	position: relative;
 	cursor: pointer;
@@ -30,4 +34,5 @@ body {
 	top: 50%;
 	-ms-transform: translateY(-50%);
 	transform: translateY(-50%);
+	color: inherit;
 }
