@@ -1,5 +1,6 @@
 body {
 	margin: 0;
+	background-color: #636b6f;
 }
 
 .banner {
@@ -7,14 +8,11 @@ body {
 	box-shadow: 0 3px 7px 0px rgba(0, 0, 0, 0.6);
 	width: 100%;
 	font-family: sans-serif;
-	border-radius: 3px;
+	border-radius: 0 0 10px 10px;
 	background-color: #f5f5f7;
 	color: #636b6f;
 }
-.banner-dark-mode {
-	color: #f5f5f7;
-	background-color: #636b6f;
-}
+
 .banner-item {
 	display: flex;
 	margin: 0 50px 0 40px;
@@ -35,4 +33,20 @@ body {
 	-ms-transform: translateY(-50%);
 	transform: translateY(-50%);
 	color: inherit;
+}
+
+.content {
+	box-shadow: 0 3px 7px 0px rgba(0, 0, 0, 0.6);
+	margin-top: 25px;
+	min-height: 200px;
+	width: 100%;
+	font-family: sans-serif;
+	border-radius: 10px;
+	background-color: #f5f5f7;
+	color: #636b6f;
+}
+
+.dark-mode {
+	color: #f5f5f7;
+	background-color: #636b6f;
 }
