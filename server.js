@@ -45,7 +45,7 @@ SERVER.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT))
 
 // ------ Database ------
 
-var connection = MYSQL.createConnection({
+var database = MYSQL.createConnection({
 	host: HOST,
 	port: DB_PORT,
 	user: DB_USER,
@@ -53,19 +53,19 @@ var connection = MYSQL.createConnection({
 });
 
 function checkDatabase() {
-	connection.connect(function(error, result) {
+	database.connect(function(error, result) {
 		if (error) throw error;
 		if (result) {
 			console.log('Connection to database established.');
 			console.log('Attempting to select database: ' + DB_NAME);
-			connection.query('USE ' + DB_NAME, function(error, result) {
+			database.query('USE ' + DB_NAME, function(error, result) {
 				if (error) {
 					console.log('Error! Database: ' + DB_NAME + ' not found! Creating...');
-					connection.query('CREATE DATABASE ' + DB_NAME, function(error, result) {
+					database.query('CREATE DATABASE ' + DB_NAME, function(error, result) {
 						if (error) throw error;
 						if (result) {
 							console.log('Database ' + DB_NAME + ' created!');
-							connection.query('USE ' + DB_NAME, function(error, result) {
+							database.query('USE ' + DB_NAME, function(error, result) {
 								if (error) throw error;
 								else checkTables();
 							});
@@ -78,10 +78,11 @@ function checkDatabase() {
 }
 
 function checkTables() {
-	connection.query('SELECT NULL FROM user', function(error, result) {
+	console.log('Checking for users table...');
+	database.query('SELECT NULL FROM user', function(error, result) {
 		if (error) {
 			console.log('Error! Table users not found! Creating...');
-			connection.query(
+			database.query(
 				'CREATE TABLE user(id INT AUTO_INCREMENT PRIMARY key NOT NULL,' +
 					'username VARCHAR(50) NOT NULL,' +
 					'email VARCHAR(50) NOT NULL,' +
@@ -92,7 +93,6 @@ function checkTables() {
 						console.log('Table user created!');
 						console.log('Setup was correct!');
 						console.log('Welcome aboard captain!');
-						endSetup();
 					}
 				}
 			);
@@ -100,41 +100,17 @@ function checkTables() {
 		if (result) {
 			console.log('Everything looks ready!');
 			console.log('Welcome aboard captain!');
-			endSetup();
 		}
-	});
-}
-
-function endSetup() {
-	connection.end();
-	connection = MYSQL.createConnection({
-		host: HOST,
-		port: DB_PORT,
-		user: DB_USER,
-		database: DB_NAME,
-		password: DB_PASSWORD
 	});
 }
 
 checkDatabase();
 
 // ------ Queries ------
+
 function register(query) {
-	connection.connect(function(error) {
-		if (error) console.log('Database not responding');
+	database.query(query, function(error, result) {
+		if (error) console.log('There was an error: \n' + error);
+		else console.log('Register sucessfull!');
 	});
-
-	console.log('Inserting new user!');
-	connection.query(query, function(error, result) {
-		if (error) {
-			console.log('There was an error!!!!!');
-			console.log(error);
-			connection.end();
-		} else {
-			console.log('Insert sucessefull!');
-			connection.end();
-		}
-	});
-
-	console.log(query);
 }
