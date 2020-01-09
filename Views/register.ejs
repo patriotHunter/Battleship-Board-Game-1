@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <%- include('head') %>
     <script src="js/register.js"></script>
-    <title>Battleship - Login</title>
+    <title>Battleship - Register</title>
     <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
+
 <body>
     <div class='authentication-wrapper'>
         <div class="form-authentication">
@@ -44,14 +46,15 @@
                         <div class="icon">&#xf023</div>
                         <div class="input-field-controler">
                             <div class="input-field-div">
-                                <input class="input-field" type="password" id="confirmPassword" placeholder="Confirm Password">
+                                <input class="input-field" type="password" id="confirmPassword"
+                                    placeholder="Confirm Password">
                             </div>
                             <div id="confirmPassword-mandatory" class="mandatory"></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <button class="form-submit" onclick="register()">To Battle!</button>
+            <button class="form-submit" type="button" name="register" id='register'>To Battle!</button>
         </div>
         <div class="bottom-wrapper">
             <p>Already a member? <a href="/login">Sign in!</a></p>
