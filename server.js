@@ -6,42 +6,43 @@ const DB_PASSWORD = '';
 const DB_PORT = 3306;
 const DB_NAME = 'battleship';
 // ------ Variables ------
-var session = {
+var sessionFormat = {
 	secret: 'radio silence',
 	saveUninitialized: true,
 	resave: true,
 	isLogged: false,
-	name: '',
+	username: '',
 	email: '',
-	cookie: { maxAge: 36000000 } //1 hour in ms
+	cookie: { maxAge: 18000000 } //1/2 hour in ms
 };
+
 // ------ Dependencies ------
-const EXPRESS = require('express');
-const HTTP = require('http');
-const EJS = require('ejs');
-const SOCKET_IO = require('socket.io');
-const APP = EXPRESS();
-const SERVER = HTTP.Server(APP);
-const IO = SOCKET_IO(SERVER);
-const MYSQL = require('mysql');
-const CRYPT = require('crypto-js/sha256');
-const PARSER = require('body-parser');
-const COOKIE = require('cookie-parser');
-const SESSION = require('express-session');
+const express = require('express');
+const http = require('http');
+const ejs = require('ejs');
+const socketio = require('socket.io');
+const app = express();
+const server = http.Server(app);
+const io = socketio(server);
+const mysql = require('mysql');
+const crypt = require('crypto-js/sha256');
+const parser = require('body-parser');
+const cookie = require('cookie-parser');
+const session = require('express-session');
 
 // ------ Server ------
-APP.set('view engine', 'ejs');
-APP.set('views', __dirname + '/Views');
-APP.use(EXPRESS.static(__dirname + '/public'));
-APP.use(PARSER.urlencoded({ extended: false }));
-APP.use(PARSER.json());
-APP.use(COOKIE());
-APP.use(SESSION(session));
+app.set('view engine', 'ejs');
+app.set('views', __dirname + '/Views');
+app.use(express.static(__dirname + '/public'));
+app.use(parser.urlencoded({ extended: false }));
+app.use(parser.json());
+app.use(cookie());
+app.use(session(sessionFormat));
 
-SERVER.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT));
+server.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT));
 
 // --- Communication ---
-// IO.on('connection', function(socket) {
+// io.on('connection', function(socket) {
 // 	socket.on('register', function(email, name, pass) {
 // 		makeQuery(
 // 			"INSERT INTO user (username, email, password) VALUES ('" +
@@ -49,24 +50,23 @@ SERVER.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT))
 // 				"', '" +
 // 				email +
 // 				"', '" +
-// 				CRYPT(pass) +
+// 				crypt(pass) +
 // 				"')"
 // 		);
 // 	});
 // });
 
 // ------ Routes ------
-APP.get('/', (req, res) => res.render('index', { isLogged: session.isLogged, name: session.name }));
-APP.get('/login', (req, res) => res.render('login'));
-APP.get('/register', (req, res) => res.render('register'));
-APP.get('/logout', function(req, res) {
-	session.isLogged = false;
-	session.name = '';
-	session.email = '';
+
+app.get('/', (req, res) => res.render('index', { status: req.session.isLogged, username: req.session.username }));
+app.get('/login', (req, res) => res.render('login'));
+app.get('/register', (req, res) => res.render('register'));
+app.get('/logout', function(req, res) {
+	req.session.destroy();
 	res.redirect('/');
 });
 
-APP.post('/register', function(req, res) {
+app.post('/register', function(req, res) {
 	if (req.body.emailcheck == 1) {
 		makeQuery(`Select email From user Where email = "${req.body.email}"`, function(result) {
 			if (result.length > 0) res.json('taken');
@@ -79,31 +79,31 @@ APP.post('/register', function(req, res) {
 				"', '" +
 				req.body.email +
 				"', '" +
-				CRYPT(req.body.pass) +
+				crypt(req.body.pass) +
 				"')",
 			function(result) {
-				session.isLogged = true;
-				session.name = req.body.name;
-				session.email = req.body.email;
+				req.session.isLogged = true;
+				req.session.username = req.body.name;
+				req.session.email = req.body.email;
 				res.send('Done!');
 			}
 		);
 	}
 });
-APP.post('/login', function(req, res) {
+app.post('/login', function(req, res) {
 	makeQuery(`Select * From user Where email = "${req.body.email}"`, function(result) {
 		if (result.length == 0) res.json('Dados inválidos');
-		else if (result[0].password == CRYPT(req.body.password)) {
-			session.isLogged = true;
-			session.name = result[0].name;
-			session.email = result[0].email;
+		else if (result[0].password == crypt(req.body.password)) {
+			req.session.isLogged = true;
+			req.session.username = result[0].username;
+			req.session.email = result[0].email;
 			res.send('done!');
 		}
 	});
 });
 // ------ Database ------
 
-var database = MYSQL.createConnection({
+var database = mysql.createConnection({
 	host: HOST,
 	port: DB_PORT,
 	user: DB_USER,
