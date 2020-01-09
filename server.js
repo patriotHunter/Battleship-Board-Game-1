@@ -72,7 +72,6 @@ APP.post('/register', function(req, res) {
 			else res.send('avaliable');
 		});
 	} else {
-		console.log(req.body.pass);
 		makeQuery(
 			"INSERT INTO user (username, email, password) VALUES ('" +
 				req.body.name +
@@ -90,7 +89,17 @@ APP.post('/register', function(req, res) {
 		);
 	}
 });
-
+APP.post('/login', function(req, res) {
+	makeQuery(`Select * From user Where email = "${req.body.email}"`, function(result) {
+		if (result.length == 0) res.json('Dados inválidos');
+		if (result[0].password == CRYPT(req.body.password)) {
+			session.isLogged = true;
+			session.name = result[0].name;
+			session.email = result[0].email;
+			res.send('done!');
+		}
+	});
+});
 // ------ Database ------
 
 var database = MYSQL.createConnection({

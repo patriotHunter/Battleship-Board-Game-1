@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <%- include('head') %>
+    <script src="js/login.js"></script>
     <link rel="stylesheet" type="text/css" href="css/style.css">
+
     <title>Battleship - Login</title>
 </head>
 <body>
     <div class='authentication-wrapper'>
-        <form action="." class="form-authentication" method="POST">
+        <div class="form-authentication">
             <div class="form-inputs">
                 <h1>Battleship</h1>
                 <h2 class="quote">Let the war begin!</h2>
@@ -20,7 +18,7 @@
                         <div class="icon">&#xf003;</div>
                         <div class="input-field-controler">
                             <div class="input-field-div">
-                                <input class="input-field" type="text" name="email" placeholder="Email" required>
+                                <input class="input-field" type="text" id="email" placeholder="Email" required>
                             </div>
                         </div>
                     </div>
@@ -28,14 +26,14 @@
                         <div class="icon">&#xf023</div>
                         <div class="input-field-controler">
                             <div class="input-field-div">
-                                <input class="input-field" type="password" name="password" placeholder="Password" required>
+                                <input class="input-field" type="password" id="password" placeholder="Password" required>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <button class="form-submit" value="Submit">Sign in</button>
-        </form>
+            <button class="form-submit" type="button" id='login'>Sign in</button>
+        </div>
         
         <div class="bottom-wrapper">
             <p>Don't have an account? <a href="/register">Create one!</a></p>
