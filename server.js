@@ -5,7 +5,16 @@ const DB_USER = 'root';
 const DB_PASSWORD = '';
 const DB_PORT = 3306;
 const DB_NAME = 'battleship';
-
+// ------ Variables ------
+var session = {
+	secret: 'radio silence',
+	saveUninitialized: true,
+	resave: true,
+	isLogged: false,
+	name: '',
+	email: '',
+	cookie: { maxAge: 36000000 } //1 hour in ms
+};
 // ------ Dependencies ------
 const EXPRESS = require('express');
 const HTTP = require('http');
@@ -17,13 +26,17 @@ const IO = SOCKET_IO(SERVER);
 const MYSQL = require('mysql');
 const CRYPT = require('crypto-js/sha256');
 const PARSER = require('body-parser');
-
+const COOKIE = require('cookie-parser');
+const SESSION = require('express-session');
 // ------ Server ------
 APP.set('view engine', 'ejs');
 APP.set('views', __dirname + '/Views');
 APP.use(EXPRESS.static(__dirname + '/public'));
 APP.use(PARSER.urlencoded({ extended: false }));
 APP.use(PARSER.json());
+APP.use(COOKIE());
+APP.use(SESSION(session));
+
 SERVER.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT));
 
 // --- Communication ---
@@ -42,15 +55,40 @@ SERVER.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT))
 // });
 
 // ------ Routes ------
-APP.get('/', (req, res) => res.render('index'));
+APP.get('/', (req, res) => res.render('index', { isLogged: session.isLogged }));
 APP.get('/login', (req, res) => res.render('login'));
 APP.get('/register', (req, res) => res.render('register'));
+APP.get('/logout', function(req, res) {
+	session.isLogged = false;
+	session.name = '';
+	session.email = '';
+	res.redirect('/');
+});
 
 APP.post('/register', function(req, res) {
-	var result = makeQuery(`Select * From user Where email = "${req.body.email}"`);
-	console.log(result);
-	// if (result.length > 0) res.send('taken');
-	// else res.send('avaliable');
+	if (req.body.emailcheck == 1) {
+		makeQuery(`Select email From user Where email = "${req.body.email}"`, function(result) {
+			if (result.length > 0) res.json('taken');
+			else res.send('avaliable');
+		});
+	} else {
+		console.log(req.body.pass);
+		makeQuery(
+			"INSERT INTO user (username, email, password) VALUES ('" +
+				req.body.name +
+				"', '" +
+				req.body.email +
+				"', '" +
+				CRYPT(req.body.pass) +
+				"')",
+			function(result) {
+				session.isLogged = true;
+				session.name = req.body.name;
+				session.email = req.body.email;
+				res.send('Done!');
+			}
+		);
+	}
 });
 
 // ------ Database ------
@@ -118,9 +156,9 @@ checkDatabase();
 
 // ------ Queries ------
 
-function makeQuery(query) {
+function makeQuery(query, callback) {
 	database.query(query, function(error, result) {
 		if (error) console.log('There was an error: \n' + error);
-		return result;
+		return callback(result);
 	});
 }
