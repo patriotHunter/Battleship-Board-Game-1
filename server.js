@@ -28,6 +28,7 @@ const CRYPT = require('crypto-js/sha256');
 const PARSER = require('body-parser');
 const COOKIE = require('cookie-parser');
 const SESSION = require('express-session');
+
 // ------ Server ------
 APP.set('view engine', 'ejs');
 APP.set('views', __dirname + '/Views');
@@ -55,7 +56,7 @@ SERVER.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT))
 // });
 
 // ------ Routes ------
-APP.get('/', (req, res) => res.render('index', { isLogged: session.isLogged }));
+APP.get('/', (req, res) => res.render('index', { isLogged: session.isLogged, name: session.name }));
 APP.get('/login', (req, res) => res.render('login'));
 APP.get('/register', (req, res) => res.render('register'));
 APP.get('/logout', function(req, res) {
@@ -92,7 +93,7 @@ APP.post('/register', function(req, res) {
 APP.post('/login', function(req, res) {
 	makeQuery(`Select * From user Where email = "${req.body.email}"`, function(result) {
 		if (result.length == 0) res.json('Dados inválidos');
-		else if(result[0].password == CRYPT(req.body.password)) {
+		else if (result[0].password == CRYPT(req.body.password)) {
 			session.isLogged = true;
 			session.name = result[0].name;
 			session.email = result[0].email;

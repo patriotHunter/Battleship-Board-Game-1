@@ -30,13 +30,14 @@ body {
 	text-decoration: none;
 	position: relative;
 	cursor: pointer;
-	vertical-align: middle;
 	top: 50%;
 	-ms-transform: translateY(-50%);
 	transform: translateY(-50%);
 	color: inherit;
 }
-
+.default-text {
+	cursor: default;
+}
 .content {
 	box-shadow: 0 3px 7px 0px rgba(0, 0, 0, 0.6);
 	margin: 25px 10px 25px 10px;
