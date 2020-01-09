@@ -53,4 +53,6 @@ body {
 .dark-mode {
 	color: #f5f5f7;
 	background-color: #636b6f;
+	box-shadow: 0 3px 17px 0px rgba(255, 255, 255, 0.6);
+
 }

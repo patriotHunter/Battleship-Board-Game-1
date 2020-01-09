@@ -6,7 +6,7 @@ function modeFunction() {
 	if (darkMode) 
 	$('body').css({ 'background-color': '#636b6f' });
 	else 
-	$('body').css({ 'background-color': '#f5f5f7' });
+	$('body').css({ 'background-color': 'black' });
 
 	darkMode = !darkMode;
 }
