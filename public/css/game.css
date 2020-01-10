@@ -1,0 +1,37 @@
+
+td {
+    width: 10%;
+    height: 10%;
+    -webkit-box-sizing: border-box;
+}
+
+table {
+    width: 35%;
+}
+
+#boards {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+tr:first-child > td, td:first-child {
+    padding-left: 20px;
+}
+
+.tile:hover, .tile-hover, .placed-tile {
+    background-color: #BDBDBD;
+    cursor: pointer;
+}
+
+.hit-tile {
+    background-color: #B40404;
+}
+
+.missed-tile {
+    background: #2ECCFA;
+}
+
+
+
