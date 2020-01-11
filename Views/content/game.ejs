@@ -14,7 +14,7 @@
     <table>
         <tr v-for="n in rows">
             <template v-for="i in columns">
-                <td id="enemy_  {{ n == 0 ? i : n + '' + i}}" class="tile" onclick="tileEnemyClick( {{ n == 0 ? i : n + '' + i}} )"></td>
+                <td id="enemy_{{ n == 0 ? i : n + '' + i}}" class="tile" onclick="tileEnemyClick( {{ n == 0 ? i : n + '' + i}} )"></td>
             </template>
         </tr>
     </table>
