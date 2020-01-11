@@ -1,3 +1,5 @@
+var socket = io('');
+
 Vue.component('board', {
 	props: [ 'columns', 'rows' ],
 	template: '#board-template'

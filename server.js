@@ -185,26 +185,29 @@ function makeQuery(query, callback) {
 }
 
 // --- Variables for Socket Handling ---
+var players = [];
+var turns = 0; 
 
 var updateShip = function(id, ship){
 
 	var player;
-
     console.log('Ship', ship);
 
 	for (var i = 0; i< players.length; i++) {
 		if(players[i].id == id) player = players[i];
 	}
 
-
 	for (var i = 0; i< ships.length; i++) {
 		if (ships[i].type == ship.type) {
 				player.ships.push(ship);
 		}
 	}
-
-    console.log('player', player.id, 'ship', ship, 'ships', player.ships);
+    console.log('Player', player.id, 'Ship', ship, 'Ships', player.ships);
 };
+
+var permissionToFire = function (id, callback){
+	
+}
 
 // --- Socket implementation
 
