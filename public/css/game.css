@@ -5,7 +5,7 @@ table {
 td {
 	width: 10%;
 	height: 10%;
-	-webkit-box-sizing: border-box;
+	
 }
 
 #boards {
@@ -29,7 +29,9 @@ td {
 .hit-tile {
 	background-color: #b40404;
 }
-
+.ship-tile{
+background-color: #787878;
+}
 .missed-tile {
 	background: #2eccfa;
 }

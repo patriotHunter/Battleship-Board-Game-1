@@ -4,12 +4,12 @@ Vue.component('board', {
 });
 
 Vue.component('enemy-board', {
-	template: '#enemyBoard-template',
-	props: [ 'columns', 'rows' ]
+	props: [ 'columns', 'rows' ],
+	template: '#enemyBoard-template'
 });
 
 new Vue({
-	el: '#main_game',
+	el: '#main_game'
 });
 
 var ships = [
@@ -33,11 +33,21 @@ function init() {
 
 for (i in ships) {
 	$('#shipspawn').append(
-		"<button class='ships' onClick=placeShip(\"" + ships[i].type + "\")>" + ships[i].type + '</buton>'
+		"<button class='ships' onClick=placeShip(\"" + ships[i].type + '")>' + ships[i].type + '</buton>'
 	);
 }
 
 function placeShip(buttonID) {
-	var ship = ships.filter(function(ships) { return ships.type === buttonID; });
-	console.log (ship);
+	var ship = ships.filter(function(ships) {
+		return ships.type === buttonID;
+	});
+	console.log(ship);
+}
+
+function tileClick(tile) {
+	console.log(tile);
+}
+
+function tileEnemyClick(tile) {
+	console.log('Enemy tile: ' + tile);
 }
