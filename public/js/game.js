@@ -17,7 +17,6 @@ new Vue({
 		statusMessage: "Waiting for the enemy...",
 		enemyReady: false,
 		ready: false,
-		 
 	}
 	
 });

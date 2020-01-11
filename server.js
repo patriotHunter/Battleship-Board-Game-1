@@ -222,11 +222,19 @@ io.on('connection', function(socket){
 	}
 
 	socket.on('place', function(ship){
-		updateShip(socket.id, ship, function(){
-		});
+		updateShip(socket.id, ship, function(){});
 	});
 
 	socket.on('ready', function(){
-		socket.broadcast.emit('enemyIsReady', false)
+		//socket.broadcast.emit('enemyIsReady', false)
 	});
+
+	socket.on('fire', function (obj){
+		turns++;
+		var enemy = []; //declaring the enemy with the coordinates
+
+	});
+
+	//The player creation
+	players.push({'id' : socket.id, 'ready': true, 'takenHits': 0, permissionToFire: false, 'ships': []});
 });
