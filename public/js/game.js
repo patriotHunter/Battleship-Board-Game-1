@@ -33,15 +33,39 @@ function init() {
 
 for (i in ships) {
 	$('#shipspawn').append(
-		"<button class='ships' onClick=placeShip(\"" + ships[i].type + '")>' + ships[i].type + '</buton>'
+		"<button class='ships' id='" +
+			ships[i].type +
+			'\' onClick=placeShip("' +
+			ships[i].type +
+			'")>' +
+			ships[i].type +
+			'</buton>'
 	);
 }
 
+var size = 0;
+var horizontal = true;
+var placingShip = false;
+var ship = '';
+let placing = document.getElementById('allyside');
+
+placing.addEventListener('mouseover', function(event) {
+	if (placingShip) {
+		$('.tile').mouseover(function() {
+			var tileID = $(this).attr('id');
+			console.log(tileID);
+		});
+	}
+});
+
 function placeShip(buttonID) {
-	var ship = ships.filter(function(ships) {
+	ship = ships.filter(function(ships) {
 		return ships.type === buttonID;
 	});
-	console.log(ship);
+
+	size = ship[0].size;
+	placingShip = true;
+	console.log('Placing: ' + ship[0].type);
 }
 
 function tileClick(tile) {
@@ -51,3 +75,31 @@ function tileClick(tile) {
 function tileEnemyClick(tile) {
 	console.log('Enemy tile: ' + tile);
 }
+
+// setDef: function(el) {
+// 	if(this.$root.chosenShip == null) return;
+// 	var setCoordination = el.currentTarget.getAttribute('data-coordination');
+
+// 	var size = this.$root.chosenShip.size;
+
+// 	for (var i = 0; i < size; i++)
+// 		if(this.$root.rotated) {
+// 			if (parseInt(setCoordination.split("").reverse().join("")[0]) + size <= this.columns) {
+// 				var e = document.querySelector('[data-coordination="'+ (parseInt(setCoordination) + (i * 1)) +'"]');
+// 				e.className  = e.className == 'placed-tile' ? 'placed-tile' : 'tile';
+// 			}
+// 			else {
+// 				var e = document.querySelector('[data-coordination="'+ (parseInt(setCoordination) - ((i) * 1)) +'"]');
+// 				e.className  = e.className == 'placed-tile' ? 'placed-tile' : 'tile';
+// 			}
+// 		} else if (!this.$root.rotated) {
+// 			if (document.querySelector('[data-coordination="'+ (parseInt(setCoordination) + (i * 10)) +'"]') != null) {
+// 				var e = document.querySelector('[data-coordination="'+ (parseInt(setCoordination) + (i * 10)) +'"]');
+// 				e.className  = e.className == 'placed-tile' ? 'placed-tile' : 'tile';
+// 			}
+// 			else {
+// 				var e = document.querySelector('[data-coordination="'+ (parseInt(setCoordination) - ((size - i) * 10)) +'"]');
+// 				e.className  = e.className == 'placed-tile' ? 'placed-tile' : 'tile';
+// 			}
+// 		}
+// }
