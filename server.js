@@ -69,7 +69,7 @@ server.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT))
 
 // ------ Routes ------
 
-app.get('/', (req, res) => res.render('index', { status: req.session.isLogged, username: req.session.username }));
+app.get('/', (req, res) => res.render('index', { status: req.session.isLogged, username: req.session.username, ships: ships }));
 app.get('/login', (req, res) => res.render('login'));
 app.get('/register', (req, res) => res.render('register'));
 app.get('/logout', function(req, res) {
