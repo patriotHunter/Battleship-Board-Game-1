@@ -1,5 +1,3 @@
-var socket = io('');
-
 Vue.component('board', {
 	props: [ 'columns', 'rows' ],
 	template: '#board-template'
@@ -11,7 +9,17 @@ Vue.component('enemy-board', {
 });
 
 new Vue({
-	el: '#main_game'
+	el: '#main_game',
+
+	data:{
+		ships,
+		choosenShip: null,
+		statusMessage: "Waiting for the enemy...",
+		enemyReady: false,
+		ready: false,
+		 
+	}
+	
 });
 
 var ships = [
@@ -53,3 +61,10 @@ function tileClick(tile) {
 function tileEnemyClick(tile) {
 	console.log('Enemy tile: ' + tile);
 }
+
+// --- Socket implementations ---
+var socket = io('');
+
+socket.on('prepareBattleship', function(){
+
+});

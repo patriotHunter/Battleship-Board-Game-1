@@ -213,10 +213,10 @@ var permissionToFire =  function(id, callback){
 // --- Socket implementation
 
 io.on('connection', function(socket){
-	var id = socket.id;
+	var id = socket.id; // id for each socket
 	
 	if (players.length >= 2){ 
-		socket.emit('Room Is Full');
+		//socket.emit('RoomIsFull', true);
 		console.log('Room is full');
 		return;
 	}
@@ -227,6 +227,6 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('ready', function(){
-		socket.broadcast.emit('enemyIsReady')
+		socket.broadcast.emit('enemyIsReady', false)
 	});
 });
