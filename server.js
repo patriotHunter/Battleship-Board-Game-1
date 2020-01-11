@@ -205,10 +205,28 @@ var updateShip = function(id, ship){
     console.log('Player', player.id, 'Ship', ship, 'Ships', player.ships);
 };
 
-var permissionToFire = function (id, callback){
-	
+var permissionToFire =  function(id, callback){
+	players.map(function(enemy){if(enemy.id == id) callback(enemy.permissionToFire = true);
+	});
 }
 
 // --- Socket implementation
 
+io.on('connection', function(socket){
+	var id = socket.id;
+	
+	if (players.length >= 2){ 
+		socket.emit('Room Is Full');
+		console.log('Room is full');
+		return;
+	}
 
+	socket.on('place', function(ship){
+		updateShip(socket.id, ship, function(){
+		});
+	});
+
+	socket.on('ready', function(){
+		socket.broadcast.emit('enemyIsReady')
+	});
+});
