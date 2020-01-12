@@ -232,7 +232,42 @@ io.on('connection', function(socket){
 	socket.on('fire', function (obj){
 		turns++;
 		var enemy = []; //declaring the enemy with the coordinates
+		
+		players.map(function(player){
+			if(players.id != socket.id) 
+				return enemy = player
+		});
+		console.log("Enemy", enemy.id);
 
+		var hit = enemy.ships
+					.map(ship => ship.location)
+					.some(coordinates => coordinates.some(coordinate => coordinate == obj.coordination))
+					
+		if (hit)
+		{
+			enemy.takenHits++;
+			console.log('Hit! ' + obj.coordination);
+			console.log('Hit!', {'coordination' : obj.coordination, 'hit' : hit});
+
+			if (enemy.takenHits >= 17) // If hits all the ships (5+4+3+3+2 = 17) wins
+			{
+				socket.emit('win', enemy);
+			}
+			else 
+			{
+				console.log('missed');
+				console.log(obj.coordination);
+			}
+			
+		}
+
+		socket.broadcast.emit('updateBroadcast', {'coordination': obj.coordination, 'enemy': enemy});
+
+		permissionToFire(enemy.id, function(){
+			io.sockets.connected[enemy.id].emit('permissionFire', enemy);
+		});
+		console.log(enemy);
+	
 	});
 
 	//The player creation
