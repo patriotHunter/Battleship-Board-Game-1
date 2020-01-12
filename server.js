@@ -21,7 +21,7 @@ var sessionFormat = {
 };
 
 var players = [];
-var turns = 0; 
+var turns = 0;
 
 // ------ Dependencies ------
 const express = require('express');
@@ -37,16 +37,16 @@ const parser = require('body-parser');
 const cookie = require('cookie-parser');
 //const session = require('express-session')
 const session = require('express-session')({
-		secret: 'radio silence',
-		saveUninitialized: true,
-		resave: true,
-		isLogged: false,
-		username: '',
-		email: '',
-		cookie: { maxAge: 18000000 } //1/2 hour in ms
-	});
+	secret: 'radio silence',
+	saveUninitialized: true,
+	resave: true,
+	isLogged: false,
+	username: '',
+	email: '',
+	cookie: { maxAge: 18000000 } //1/2 hour in ms
+});
 
-const sharedsession = require("express-socket.io-session");
+const sharedsession = require('express-socket.io-session');
 
 // ------ Server ------
 app.set('view engine', 'ejs');
@@ -77,101 +77,96 @@ server.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT))
 // });
 
 // --- Configuration Socket io and express-session
-io.use(sharedsession(session, {autoSave: true}));
+io.use(sharedsession(session, { autoSave: true }));
 //io.use(sharedsession(session));
 
-io.on('connection', function(socket){
+io.on('connection', function(socket) {
 	console.log('players ', players);
 
 	//var id = socket.id; // id for each socket
-	console.log("New session made it");
-	
-	if (players.length >= 2){ 
+	console.log('New session made it');
+
+	if (players.length >= 2) {
 		//socket.emit('RoomIsFull', true);
 		console.log('Room is full');
 		return;
 	}
 
-	
 	socket.on('login', function(userdata) {
 		console.log('Received login message');
 		socket.emit('Received login message');
-        socket.handshake.session.userdata = userdata;
-        socket.handshake.session.save();
-	});
-	
-	socket.on("logout", function(userdata) {
-        if (socket.handshake.session.userdata) {
-            delete socket.handshake.session.userdata;
-            socket.handshake.session.save();
-        }
-    });      
-
-
-	socket.on('place', function(ship){
-		updateShip(socket.id, ship, function(){});
+		socket.handshake.session.userdata = userdata;
+		socket.handshake.session.save();
 	});
 
-	socket.on('ready', function(){
+	socket.on('logout', function(userdata) {
+		if (socket.handshake.session.userdata) {
+			delete socket.handshake.session.userdata;
+			socket.handshake.session.save();
+		}
+	});
+
+	socket.on('place', function(ship) {
+		updateShip(socket.id, ship, function() {});
+	});
+
+	socket.on('ready', function() {
 		//socket.broadcast.emit('enemyIsReady', false)
 	});
 
 	//Mechanism of fire reaction
-	socket.on('fire', function (obj){
+	socket.on('fire', function(obj) {
 		turns++;
 		var enemy = []; //declaring the enemy with the coordinates
-		
-		players.map(function(player){
-			if(players.id != socket.id) 
-				return enemy = player
+
+		players.map(function(player) {
+			if (players.id != socket.id) return (enemy = player);
 		});
-		console.log("Enemy", enemy.id);
+		console.log('Enemy', enemy.id);
 
 		var hit = enemy.ships
-					.map(ship => ship.location)
-					.some(coordinates => coordinates.some(coordinate => coordinate == obj.coordination))
-					
-		if (hit)
-		{
+			.map((ship) => ship.location)
+			.some((coordinates) => coordinates.some((coordinate) => coordinate == obj.coordination));
+
+		if (hit) {
 			enemy.takenHits++;
 			console.log('Hit! ' + obj.coordination);
-			console.log('Hit!', {'coordination' : obj.coordination, 'hit' : hit});
+			console.log('Hit!', { coordination: obj.coordination, hit: hit });
 
-			if (enemy.takenHits >= 17) // If hits all the ships (5+4+3+3+2 = 17) wins
-			{
+			if (enemy.takenHits >= 17) {
+				// If hits all the ships (5+4+3+3+2 = 17) wins
 				socket.emit('win', enemy);
-			}
-			else 
-			{
+			} else {
 				console.log('missed');
 				console.log(obj.coordination);
-			}		
+			}
 		}
 
-		socket.broadcast.emit('updateBroadcast', {'coordination': obj.coordination, 'enemy': enemy});
+		socket.broadcast.emit('updateBroadcast', { coordination: obj.coordination, enemy: enemy });
 
-		permissionToFire(enemy.id, function(){
+		permissionToFire(enemy.id, function() {
 			io.sockets.connected[enemy.id].emit('permissionFire', enemy);
 		});
 		console.log(enemy);
 
-		socket.on('disconnect', function(){
-			players.map(function(player, index){if(player.id == id) players.splice(index, 1)});
-			console.log(id +" player left "+ players.length);
+		socket.on('disconnect', function() {
+			players.map(function(player, index) {
+				if (player.id == id) players.splice(index, 1);
+			});
+			console.log(id + ' player left ' + players.length);
 		});
-	
 	});
 
 	//The player creation
-	players.push({'id' : socket.id, 'ready': true, 'takenHits': 0, permissionToFire: false, 'ships': []});
+	players.push({ id: socket.id, ready: true, takenHits: 0, permissionToFire: false, ships: [] });
 
-	socket.on('disconnect', function(){
-		console.log("Player ", socket.id, " left the game");
+	socket.on('disconnect', function() {
+		console.log('Player ', socket.id, ' left the game');
 	});
 });
 
 // ------ Routes ------
-app.get('/', (req, res) => res.render('index', { status: req.session.isLogged, username: req.session.username, ships: ships }));
+app.get('/', (req, res) => res.render('index', { status: req.session.isLogged, username: req.session.username }));
 app.get('/login', (req, res) => res.render('login'));
 app.get('/register', (req, res) => res.render('register'));
 app.get('/logout', function(req, res) {
@@ -319,24 +314,24 @@ function makeQuery(query, callback) {
 }
 
 // --- Variables for Socket Handling ---
-var updateShip = function(id, ship){
-
+var updateShip = function(id, ship) {
 	var player;
-    console.log('Ship', ship);
+	console.log('Ship', ship);
 
-	for (var i = 0; i< players.length; i++) {
-		if(players[i].id == id) player = players[i];
+	for (var i = 0; i < players.length; i++) {
+		if (players[i].id == id) player = players[i];
 	}
 
-	for (var i = 0; i< ships.length; i++) {
+	for (var i = 0; i < ships.length; i++) {
 		if (ships[i].type == ship.type) {
-				player.ships.push(ship);
+			player.ships.push(ship);
 		}
 	}
-    console.log('Player', player.id, 'Ship', ship, 'Ships', player.ships);
+	console.log('Player', player.id, 'Ship', ship, 'Ships', player.ships);
 };
 
-var permissionToFire =  function(id, callback){
-	players.map(function(enemy){if(enemy.id == id) callback(enemy.permissionToFire = true);
+var permissionToFire = function(id, callback) {
+	players.map(function(enemy) {
+		if (enemy.id == id) callback((enemy.permissionToFire = true));
 	});
-}
+};

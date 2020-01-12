@@ -11,14 +11,13 @@ Vue.component('enemy-board', {
 new Vue({
 	el: '#main_game',
 
-	data:{
+	data: {
 		ships,
 		choosenShip: null,
-		statusMessage: "Waiting for the enemy...",
+		statusMessage: 'Waiting for the enemy...',
 		enemyReady: false,
-		ready: false,
+		ready: false
 	}
-	
 });
 
 var ships = [
@@ -56,6 +55,8 @@ var size = 0;
 var horizontal = true;
 var placingShip = false;
 var ship = '';
+var shipsToPlace = ships.length;
+var readyToPlay = false;
 
 function paintHorizontal(tileID, color) {
 	for (i = 1; i < ship.size; i++) {
@@ -148,6 +149,7 @@ function tileClick(tile) {
 function doneplacing() {
 	placingShip = false;
 	if (--ship.available == 0) $('#' + ship.type).attr('disabled', true);
+	if(--shipsToPlace == 0) readyToPlay = true;
 	//console.log(ships);
 }
 
@@ -158,6 +160,4 @@ function tileEnemyClick(tile) {
 // --- Socket implementations ---
 var socket = io('');
 
-socket.on('prepareBattleship', function(){
-
-});
+socket.on('prepareBattleship', function() {});
