@@ -20,15 +20,6 @@ var sessionFormat = {
 	cookie: { maxAge: 18000000 } //1/2 hour in ms
 };
 
-// --- Game Variables ---
-var ships = [
-	{ type: 'Carrier', size: 5, sank: false, available: 1, location: [] },
-	{ type: 'Battleship', size: 4, sank: false, available: 1, location: [] },
-	{ type: 'Cruiser', size: 3, sank: false, available: 1, location: [] },
-	{ type: 'Submarine', size: 3, sank: false, available: 1, location: [] },
-	{ type: 'Destroyer', size: 2, sank: false, available: 1, location: [] }
-];
-
 var players = [];
 var turns = 0; 
 
