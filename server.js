@@ -53,6 +53,7 @@ app.use(session(sessionFormat));
 server.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT));
 
 // --- Communication ---
+
 // io.on('connection', function(socket) {
 // 	socket.on('register', function(email, name, pass) {
 // 		makeQuery(
@@ -66,6 +67,73 @@ server.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT))
 // 		);
 // 	});
 // });
+
+io.on('connection', function(socket){
+	var id = socket.id; // id for each socket
+	
+	if (players.length >= 2){ 
+		//socket.emit('RoomIsFull', true);
+		console.log('Room is full');
+		return;
+	}
+
+	socket.on('place', function(ship){
+		updateShip(socket.id, ship, function(){});
+	});
+
+	socket.on('ready', function(){
+		//socket.broadcast.emit('enemyIsReady', false)
+	});
+
+	//Mechanism of fire reaction
+	socket.on('fire', function (obj){
+		turns++;
+		var enemy = []; //declaring the enemy with the coordinates
+		
+		players.map(function(player){
+			if(players.id != socket.id) 
+				return enemy = player
+		});
+		console.log("Enemy", enemy.id);
+
+		var hit = enemy.ships
+					.map(ship => ship.location)
+					.some(coordinates => coordinates.some(coordinate => coordinate == obj.coordination))
+					
+		if (hit)
+		{
+			enemy.takenHits++;
+			console.log('Hit! ' + obj.coordination);
+			console.log('Hit!', {'coordination' : obj.coordination, 'hit' : hit});
+
+			if (enemy.takenHits >= 17) // If hits all the ships (5+4+3+3+2 = 17) wins
+			{
+				socket.emit('win', enemy);
+			}
+			else 
+			{
+				console.log('missed');
+				console.log(obj.coordination);
+			}		
+		}
+
+		socket.broadcast.emit('updateBroadcast', {'coordination': obj.coordination, 'enemy': enemy});
+
+		permissionToFire(enemy.id, function(){
+			io.sockets.connected[enemy.id].emit('permissionFire', enemy);
+		});
+		console.log(enemy);
+
+		socket.on('disconnect', function(){
+			players.map(function(player, index){if(player.id == id) players.splice(index, 1)});
+			console.log(id +" player left "+ players.length);
+		});
+	
+	});
+
+	//The player creation
+	players.push({'id' : socket.id, 'ready': true, 'takenHits': 0, permissionToFire: false, 'ships': []});
+});
 
 // ------ Routes ------
 
@@ -209,67 +277,3 @@ var permissionToFire =  function(id, callback){
 	players.map(function(enemy){if(enemy.id == id) callback(enemy.permissionToFire = true);
 	});
 }
-
-// --- Socket implementation
-
-io.on('connection', function(socket){
-	var id = socket.id; // id for each socket
-	
-	if (players.length >= 2){ 
-		//socket.emit('RoomIsFull', true);
-		console.log('Room is full');
-		return;
-	}
-
-	socket.on('place', function(ship){
-		updateShip(socket.id, ship, function(){});
-	});
-
-	socket.on('ready', function(){
-		//socket.broadcast.emit('enemyIsReady', false)
-	});
-
-	socket.on('fire', function (obj){
-		turns++;
-		var enemy = []; //declaring the enemy with the coordinates
-		
-		players.map(function(player){
-			if(players.id != socket.id) 
-				return enemy = player
-		});
-		console.log("Enemy", enemy.id);
-
-		var hit = enemy.ships
-					.map(ship => ship.location)
-					.some(coordinates => coordinates.some(coordinate => coordinate == obj.coordination))
-					
-		if (hit)
-		{
-			enemy.takenHits++;
-			console.log('Hit! ' + obj.coordination);
-			console.log('Hit!', {'coordination' : obj.coordination, 'hit' : hit});
-
-			if (enemy.takenHits >= 17) // If hits all the ships (5+4+3+3+2 = 17) wins
-			{
-				socket.emit('win', enemy);
-			}
-			else 
-			{
-				console.log('missed');
-				console.log(obj.coordination);
-			}
-			
-		}
-
-		socket.broadcast.emit('updateBroadcast', {'coordination': obj.coordination, 'enemy': enemy});
-
-		permissionToFire(enemy.id, function(){
-			io.sockets.connected[enemy.id].emit('permissionFire', enemy);
-		});
-		console.log(enemy);
-	
-	});
-
-	//The player creation
-	players.push({'id' : socket.id, 'ready': true, 'takenHits': 0, permissionToFire: false, 'ships': []});
-});
