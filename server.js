@@ -27,6 +27,9 @@ var ships = [
 	{ type: 'Destroyer', size: 2, sank: false, available: 1, location: [] }
 ];
 
+var players = [];
+var turns = 0; 
+
 // ------ Dependencies ------
 const express = require('express');
 const http = require('http');
@@ -80,11 +83,13 @@ server.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT))
 // 	}
 // });
 
-io.use(sharedsession(session));
+io.use(sharedsession(session, {autoSave: true}));
 
-io.on('connection', function(error, socket, ){
+io.on('connection', function(socket){
+	players.push(socket);
+	console.log('players ',players);
 
-	var id = session.id; // id for each socket
+	//var id = socket.id; // id for each socket
 	console.log("New session made it");
 	
 	if (players.length >= 2){ 
@@ -92,6 +97,17 @@ io.on('connection', function(error, socket, ){
 		console.log('Room is full');
 		return;
 	}
+
+	socket.on("login", function(userdata) {
+        socket.handshake.session.userdata = userdata;
+        socket.handshake.session.save();
+	});
+	
+	socket.on("logout", function(userdata) {
+        delete socket.handshake.session.userdata;
+        socket.handshake.session.save();
+    });
+
 
 	socket.on('place', function(ship){
 		updateShip(socket.id, ship, function(){});
@@ -151,7 +167,7 @@ io.on('connection', function(error, socket, ){
 	players.push({'id' : socket.id, 'ready': true, 'takenHits': 0, permissionToFire: false, 'ships': []});
 
 	socket.on('disconnect', function(){
-		console.log("Player ", session.id, " left the game");
+		console.log("Player ", socket.id, " left the game");
 	});
 });
 
@@ -273,9 +289,6 @@ function makeQuery(query, callback) {
 }
 
 // --- Variables for Socket Handling ---
-var players = [];
-var turns = 0; 
-
 var updateShip = function(id, ship){
 
 	var player;
