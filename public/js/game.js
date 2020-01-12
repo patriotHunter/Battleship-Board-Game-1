@@ -132,14 +132,15 @@ function tileClick(tile) {
 					doneplacing();
 			}
 			} else {
+				console.log(parseInt(tile / 10) * 10 + 10 * ship.size);
 				if (parseInt(tile / 10) * 10 + 10 * ship.size < 100) {
 					paintVertical(tile, '');
 					for (i = 0; i < ship.size; i++) {
 						$('#' + (tile + i * 10).toString()).addClass('ship-tile');
 						ship.location.push(tile + i * 10);
 					}
+					doneplacing();
 				}
-				doneplacing();
 			}
 		}
 	}
