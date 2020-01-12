@@ -81,19 +81,26 @@ app.use(cookie());
 app.use(session);
 io.use(sharedsession(session, { autosave: true }));
 
-//npm install -i
+
 server.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT));
 
 // --- Configuration Socket io and express-session
 //io.use(sharedsession(session, {autoSave: true}));
 
 io.on('connection', function(socket) {
+	var id = socket.id;
+	console.log('Player: ' + id + ' joined the room');
+
 	socket.on('ready', function(player) {
-		console.log('player: ' + player + ' is ready for battle!');
+		console.log('Player: ' + player + ' is ready for battle!');
 	});
 	
-	// var id = socket.id;
-	// console.log('players ', players);
+	console.log('Players ', players.length);
+	if (players.length >= 2){ 
+		//socket.emit('RoomIsFull', true);
+		console.log('Room is full');
+		return;
+	}
 	
 	// var socket_session = socket.handshake.session;
 	// var socket_session_id = socket.handshake.sessionID;
@@ -101,11 +108,7 @@ io.on('connection', function(socket) {
 	// // console.log("SOCKET_SESSION:",socket_session);
 	// // console.log("SOCKET_SESSION_ID:",socket_session_id);
 	
-	// if (players.length >= 2){ 
-	// 	//socket.emit('RoomIsFull', true);
-	// 	console.log('Room is full');
-	// 	return;
-	// }
+	
 
 	// socket.on('join',function(identifier){
     //     socket.id = identifier;
