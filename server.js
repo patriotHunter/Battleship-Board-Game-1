@@ -20,16 +20,9 @@ var sessionFormat = {
 	cookie: { maxAge: 18000000 } //1/2 hour in ms
 };
 
-var players = [];
-var turns = 0;
-
-var ships = [
-	{'type': 'Aircaft', 'size': 5, 'rekt': false, 'available': 1, 'location' : []},
-	{'type': 'Battleship', 'size': 4, 'rekt': false, 'available': 1, 'location' : []},
-	{'type': 'Destroyer', 'size': 3, 'rekt': false, 'available': 1, 'location' : []},
-	{'type': 'Submarine', 'size': 3, 'rekt': false, 'available': 1, 'location' : []},
-	{'type': 'Patrolboat', 'size': 2, 'rekt': false, 'available': 1, 'location' : []}
-];
+var gameData = new function() {
+	this.gameList = {};
+}();
 
 // ------ Dependencies ------
 const express = require('express');
@@ -43,7 +36,7 @@ const mysql = require('mysql');
 const crypt = require('crypto-js/sha256');
 const parser = require('body-parser');
 const cookie = require('cookie-parser');
-//const session = require('express-session')
+const sharedsession = require('express-socket.io-session');
 const session = require('express-session')({
 	secret: 'radio silence',
 	saveUninitialized: true,
@@ -54,7 +47,7 @@ const session = require('express-session')({
 	cookie: { maxAge: 18000000 } //1/2 hour in ms
 });
 
-const sharedsession = require('express-socket.io-session');
+
 
 // ------ Server ------
 app.set('view engine', 'ejs');
@@ -63,133 +56,25 @@ app.use(express.static(__dirname + '/public'));
 app.use(parser.urlencoded({ extended: false }));
 app.use(parser.json());
 app.use(cookie());
-//app.use(session(sessionFormat));
 app.use(session);
+io.use(sharedsession(session, { autosave: true }));
 
 server.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT));
 
 // --- Communication ---
 
-// io.on('connection', function(socket) {
-// 	socket.on('register', function(email, name, pass) {
-// 		makeQuery(
-// 			"INSERT INTO user (username, email, password) VALUES ('" +
-// 				name +
-// 				"', '" +
-// 				email +
-// 				"', '" +
-// 				crypt(pass) +
-// 				"')"
-// 		);
-// 	});
-// });
-
-// --- Configuration Socket io and express-session
-io.use(sharedsession(session, {autoSave: true}));
-
 io.on('connection', function(socket) {
-	console.log('players ', players);
-
-	//var id = socket.id; // id for each socket
-	console.log("New session made it");
-
-	var socket_session = socket.handshake.session
-	var socket_session_id = socket.handshake.sessionID;
-
-	console.log("SOCKET_SESSION:",socket_session);
-    console.log("SOCKET_SESSION_ID:",socket_session_id);
 	
-	if (players.length >= 2){ 
-		//socket.emit('RoomIsFull', true);
-		console.log('Room is full');
-		return;
-	}
-
-	
-	socket.on('authentication-wrapper', function(userdata) {
-		console.log('Received login message');
-		socket.emit('Received login message');
-		socket.handshake.session.userdata = userdata;
-		socket.handshake.session.save();
-	});
-	
-	socket.on("logout", function(userdata) {
-		console.log('Received logout message');
-		socket.emit('Received logout message');
-        if (socket.handshake.session.userdata) {
-            delete socket.handshake.session.userdata;
-            socket.handshake.session.save();
-        }
-    });      
-
-	socket.on('logout', function(userdata) {
-		if (socket.handshake.session.userdata) {
-			delete socket.handshake.session.userdata;
-			socket.handshake.session.save();
-		}
-	});
-
-	socket.on('place', function(ship) {
-		updateShip(socket.id, ship, function() {});
-	});
-
-	socket.on('ready', function() {
-		//socket.broadcast.emit('enemyIsReady', false)
-	});
-
-	//Mechanism of fire reaction
-	socket.on('fire', function(obj) {
-		turns++;
-		var enemy = []; //declaring the enemy with the coordinates
-
-		players.map(function(player) {
-			if (players.id != socket.id) return (enemy = player);
-		});
-		console.log('Enemy', enemy.id);
-
-		var hit = enemy.ships
-			.map((ship) => ship.location)
-			.some((coordinates) => coordinates.some((coordinate) => coordinate == obj.coordination));
-
-		if (hit) {
-			enemy.takenHits++;
-			console.log('Hit! ' + obj.coordination);
-			console.log('Hit!', { coordination: obj.coordination, hit: hit });
-
-			if (enemy.takenHits >= 17) {
-				// If hits all the ships (5+4+3+3+2 = 17) wins
-				socket.emit('win', enemy);
-			} else {
-				console.log('missed');
-				console.log(obj.coordination);
-			}
-		}
-
-		socket.broadcast.emit('updateBroadcast', { coordination: obj.coordination, enemy: enemy });
-
-		permissionToFire(enemy.id, function() {
-			io.sockets.connected[enemy.id].emit('permissionFire', enemy);
-		});
-		console.log(enemy);
-
-		socket.on('disconnect', function() {
-			players.map(function(player, index) {
-				if (player.id == id) players.splice(index, 1);
-			});
-			console.log(id + ' player left ' + players.length);
-		});
-	});
-
-	//The player creation
-	players.push({ id: socket.id, ready: true, takenHits: 0, permissionToFire: false, ships: [] });
-
-	socket.on('disconnect', function() {
-		console.log('Player ', socket.id, ' left the game');
+	socket.on('ready', function(player) {
+		session.Store.get(player, () => console.log(found));
+		console.log('player: ' + player + ' is ready for battle!');
 	});
 });
 
 // ------ Routes ------
-app.get('/', (req, res) => res.render('index', { status: req.session.isLogged, username: req.session.username }));
+app.get('/', (req, res) =>
+	res.render('index', { session: req.sessionID, status: req.session.isLogged, username: req.session.username })
+);
 app.get('/login', (req, res) => res.render('login'));
 app.get('/register', (req, res) => res.render('register'));
 app.get('/logout', function(req, res) {
