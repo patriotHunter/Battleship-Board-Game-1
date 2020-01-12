@@ -5,7 +5,9 @@ const DB_USER = 'root';
 const DB_PASSWORD = '';
 const DB_PORT = 3306;
 const DB_NAME = 'battleship';
+
 // ------ Variables ------
+// --- Setup Variables ---
 var sessionFormat = {
 	secret: 'radio silence',
 	saveUninitialized: true,
@@ -15,6 +17,15 @@ var sessionFormat = {
 	email: '',
 	cookie: { maxAge: 18000000 } //1/2 hour in ms
 };
+
+// --- Game Variables ---
+var ships = [
+	{ type: 'Carrier', size: 5, sank: false, available: 1, location: [] },
+	{ type: 'Battleship', size: 4, sank: false, available: 1, location: [] },
+	{ type: 'Cruiser', size: 3, sank: false, available: 1, location: [] },
+	{ type: 'Submarine', size: 3, sank: false, available: 1, location: [] },
+	{ type: 'Destroyer', size: 2, sank: false, available: 1, location: [] }
+];
 
 // ------ Dependencies ------
 const express = require('express');
@@ -58,7 +69,7 @@ server.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT))
 
 // ------ Routes ------
 
-app.get('/', (req, res) => res.render('index', { status: req.session.isLogged, username: req.session.username }));
+app.get('/', (req, res) => res.render('index', { status: req.session.isLogged, username: req.session.username, ships: ships }));
 app.get('/login', (req, res) => res.render('login'));
 app.get('/register', (req, res) => res.render('register'));
 app.get('/logout', function(req, res) {

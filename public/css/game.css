@@ -1,0 +1,74 @@
+table {
+	width: 35%;
+}
+
+td {
+	width: 10%;
+	height: 10%;
+	
+}
+
+#boards {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-around;
+}
+
+.tile {
+    border: 1px solid black;
+}
+
+.tile:hover,
+.tile-hover,
+.placed-tile {
+	background-color: #bdbdbd;
+	cursor: pointer;
+}
+
+.hit-tile {
+	background-color: #b40404;
+}
+.ship-tile{
+background-color: #787878;
+}
+.missed-tile {
+	background: #2eccfa;
+}
+
+#shipspawn{
+    margin-top: 20px;
+    text-align: center;
+}
+
+#shipspawn > button{
+
+    font-family: sans-serif;
+	font-size: 14px;
+	text-transform: uppercase;
+	color: #fff;
+	background-color: rgb(9, 134, 9);
+	border-radius: 3px;
+	border: 2px solid rgb(10, 140, 9);
+	outline: 0;
+	padding: 10px 16px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+#shipspawn > button:hover {
+	background-color: rgb(10, 140, 9);
+}
+#shipspawn > button:active {
+	background: linear-gradient(to bottom, rgb(10, 140, 9) 5%, rgb(6, 83, 6) 100%);
+	background-color: rgb(6, 83, 6);
+	position: relative;
+	top: 1px;
+}
+
+#shipspawn > button:disabled{
+	background: linear-gradient(to bottom, rgb(94, 94, 94) 5%, rgb(63, 63, 63) 100%);
+	background-color: #000;
+	border: 2px solid #000;
+
+}

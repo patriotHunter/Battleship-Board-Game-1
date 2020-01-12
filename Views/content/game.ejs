@@ -1,0 +1,36 @@
+<link rel="stylesheet" href="css/game.css">
+<!-- vue  template -->
+<template id="board-template">
+    <table id='allyside'>
+        <tr v-for="n in rows">
+            <template v-for="i in columns">
+                <td id="{{ n == 0 ? i : n + '' + i}}" class="tile" onclick="tileClick( {{ n == 0 ? i : n + '' + i}} )"></td>
+            </template>
+        </tr>
+    </table>
+</template>
+
+<template id="enemyBoard-template">
+    <table id='enemyside'>
+        <tr v-for="n in rows">
+            <template v-for="i in columns">
+                <td id="enemy_{{ n == 0 ? i : n + '' + i}}" class="tile" onclick="tileEnemyClick( {{ n == 0 ? i : n + '' + i}} )"></td>
+            </template>
+        </tr>
+    </table>
+</template>
+
+
+<!-- game -->
+<div id="main_game">
+    <div id="boards">
+        <board :columns="9" :rows="9"></board>
+        <enemy-board :columns="9" :rows="9"></enemy-board>
+    </div>
+</div>
+<div id='shipspawn'></div>
+
+
+
+
+<script type="text/javascript" src="js/game.js"></script>
