@@ -232,6 +232,12 @@ io.on('connection', function(socket){
 	socket.on('fire', function (obj){
 		turns++;
 		var enemy = []; //declaring the enemy with the coordinates
+		
+		players.map(function(player){
+			if(players.id != socket.id) 
+				return enemy = player
+		});
+		console.log("Enemy", enemy.id);
 
 	});
 
