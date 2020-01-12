@@ -253,6 +253,11 @@ io.on('connection', function(socket){
 			{
 				socket.emit('win', enemy);
 			}
+			else 
+			{
+				console.log('missed');
+				console.log(obj.coordination);
+			}
 			
 		}
 	});
