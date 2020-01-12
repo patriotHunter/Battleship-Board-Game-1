@@ -69,6 +69,7 @@ server.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT))
 // });
 
 io.on('connection', function(socket){
+	
 	var id = socket.id; // id for each socket
 	
 	if (players.length >= 2){ 
@@ -133,6 +134,10 @@ io.on('connection', function(socket){
 
 	//The player creation
 	players.push({'id' : socket.id, 'ready': true, 'takenHits': 0, permissionToFire: false, 'ships': []});
+
+	socket.on('disconnect', function(){
+		console.log("Player ", socket.id, "left the game");
+	});
 });
 
 // ------ Routes ------
