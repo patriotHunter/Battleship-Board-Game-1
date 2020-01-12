@@ -5,20 +5,20 @@
             <a href="/" class="banner-text fa fa-home"> Home</a>
         </div>
         <div>
-            <div class="banner-text default-text"> <%= username %></div>
+            <div class="banner-text default-text"> <% if(status){ %><%= username %><%}else{%>Guest<%}%></div>
         </div>
         <div class='links'>
             <% if(status){ %>
-            <a href="/logout" class="banner-text fa fa-user"> Logout</a>
-            <% }else{ %>
-            <a href="/login" class="banner-text fa fa-user"> Login</a>
+                <a href="/logout" class="banner-text fa fa-user"> Logout</a>
+                <% }else{ %>
+                <a href="/login" class="banner-text fa fa-user"> Login</a>
 
-            <a href="/register" class="banner-text fa fa-key"> Register</a>
-            <% } %>
-            <div class="checkButton">
-                <input class="knob" type="checkbox" onclick="modeFunction()">
-                <span class="light"></span>
+                <a href="/register" class="banner-text fa fa-key"> Register</a>
+                <% } %>
+                <div class="checkButton">
+                    <input class="knob" type="checkbox" onclick="modeFunction()">
+                    <span class="light"></span>
+                </div>
             </div>
         </div>
     </div>
-</div>
