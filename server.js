@@ -86,7 +86,6 @@ server.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT))
 
 // --- Configuration Socket io and express-session
 io.use(sharedsession(session, {autoSave: true}));
-//io.use(sharedsession(session));
 
 io.on('connection', function(socket){
 	console.log('players ', players);
@@ -107,7 +106,7 @@ io.on('connection', function(socket){
 	}
 
 	
-	socket.on('login', function(userdata) {
+	socket.on('authentication-wrapper', function(userdata) {
 		console.log('Received login message');
 		socket.emit('Received login message');
         socket.handshake.session.userdata = userdata;
