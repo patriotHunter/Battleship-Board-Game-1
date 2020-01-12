@@ -80,7 +80,7 @@ server.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT))
 io.use(sharedsession(session, {autoSave: true}));
 //io.use(sharedsession(session));
 
-io.on('connection', function(err, socket){
+io.on('connection', function(socket){
 	console.log('players ', players);
 
 	//var id = socket.id; // id for each socket
@@ -93,7 +93,9 @@ io.on('connection', function(err, socket){
 	}
 
 	
-	socket.on("login", function(userdata) {
+	socket.on('login', function(userdata) {
+		console.log('Received login message');
+		socket.emit('Received login message');
         socket.handshake.session.userdata = userdata;
         socket.handshake.session.save();
 	});
