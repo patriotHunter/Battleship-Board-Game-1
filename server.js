@@ -84,26 +84,8 @@ app.use(session(sessionFormat));
 //npm install -i
 server.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT));
 
-// --- Communication ---
-
-// io.on('connection', function(socket) {
-// 	socket.on('register', function(email, name, pass) {
-// 		makeQuery(
-// 			"INSERT INTO user (username, email, password) VALUES ('" +
-// 				name +
-// 				"', '" +
-// 				email +
-// 				"', '" +
-// 				crypt(pass) +
-// 				"')"
-// 		);
-// 	});
-// });
-
 // --- Configuration Socket io and express-session
 //io.use(sharedsession(session, {autoSave: true}));
-
-
 
 io.on('connection', function(socket) {
 	socket.on('ready', function(player) {
@@ -131,7 +113,7 @@ io.on('connection', function(socket) {
     //     console.log(players);
     //     io.emit('update'," ### "+socket.id+" joined the chatroom  ###");
     // });
-	      
+	
 
 	// //Mechanism of fire reaction
 	// socket.on('fire', function(obj) {
