@@ -57,6 +57,7 @@ function paintHorizontal(tileID, color) {
 		} else break;
 	}
 }
+
 function paintVertical(tileID, color) {
 	for (i = 1; i < ship.size; i++) {
 		var id = '#' + (tileID + i * 10).toString();
@@ -101,26 +102,36 @@ function placeShip(buttonID) {
 	console.log('Placing: ' + ship.type);
 }
 
+function ready(tile) {
+	if (horizontal) {
+		for (i = 0; i < ship.size; i++) if ($('#' + (tile + i).toString()).hasClass('ship-tile')) return false;
+	} else {
+		for (i = 0; i < ship.size; i++) if ($('#' + (tile + i * 10).toString()).hasClass('ship-tile')) return false;
+	}
+	return true;
+}
 function tileClick(tile) {
 	if (placingShip) {
-		if (horizontal) {
-			if ((tile + ship.size) % 10 < 10 && tile % 10 < (tile + ship.size) % 10) {
-				paintHorizontal(tile, '');
-				for (i = 0; i < ship.size; i++) {
-					$('#' + (tile + i).toString()).addClass('ship-tile');
-					ship.location.push(tile + i);
+		if (ready(tile)) {
+			if (horizontal) {
+				if ((tile + ship.size) % 10 < 10 && tile % 10 < (tile + ship.size) % 10) {
+					paintHorizontal(tile, '');
+					for (i = 0; i < ship.size; i++) {
+						$('#' + (tile + i).toString()).addClass('ship-tile');
+						ship.location.push(tile + i);
+					}
+					doneplacing();
+				}
+			} else {
+				if (parseInt(tile / 10) * 10 + 10 * ship.size < 100) {
+					paintVertical(tile, '');
+					for (i = 0; i < ship.size; i++) {
+						$('#' + (tile + i * 10).toString()).addClass('ship-tile');
+						ship.location.push(tile + i * 10);
+					}
 				}
 				doneplacing();
 			}
-		} else {
-			if (parseInt(tile / 10) * 10 + 10 * ship.size < 100) {
-				paintVertical(tile, '');
-				for (i = 0; i < ship.size; i++) {
-					$('#' + (tile + i * 10).toString()).addClass('ship-tile');
-					ship.location.push(tile + i * 10);
-				}
-			}
-			doneplacing();
 		}
 	}
 }
