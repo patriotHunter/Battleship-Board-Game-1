@@ -40,6 +40,7 @@ const crypt = require('crypto-js/sha256');
 const parser = require('body-parser');
 const cookie = require('cookie-parser');
 const session = require('express-session');
+const sharedsession = require("express-socket.io-session");
 
 // ------ Server ------
 app.set('view engine', 'ejs');
@@ -68,9 +69,23 @@ server.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT))
 // 	});
 // });
 
-io.on('connection', function(socket){
-	
-	var id = socket.id; // id for each socket
+// --- Configuration Socket io
+// io.set('authorization', function(data, accept){
+// 	cookie(data, {}, function(err){
+// 		if(!err)
+// 		{
+// 			var sessionID = data.signedCookies[KEY];
+// 			store.get(session)
+// 		}
+// 	}
+// });
+
+io.use(sharedsession(session));
+
+io.on('connection', function(error, socket, ){
+
+	var id = session.id; // id for each socket
+	console.log("New session made it");
 	
 	if (players.length >= 2){ 
 		//socket.emit('RoomIsFull', true);
@@ -136,7 +151,7 @@ io.on('connection', function(socket){
 	players.push({'id' : socket.id, 'ready': true, 'takenHits': 0, permissionToFire: false, 'ships': []});
 
 	socket.on('disconnect', function(){
-		console.log("Player ", socket.id, "left the game");
+		console.log("Player ", session.id, " left the game");
 	});
 });
 
