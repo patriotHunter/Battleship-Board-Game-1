@@ -23,6 +23,14 @@ var sessionFormat = {
 var players = [];
 var turns = 0; 
 
+var ships = [
+	{'type': 'Aircaft', 'size': 5, 'rekt': false, 'available': 1, 'location' : []},
+	{'type': 'Battleship', 'size': 4, 'rekt': false, 'available': 1, 'location' : []},
+	{'type': 'Destroyer', 'size': 3, 'rekt': false, 'available': 1, 'location' : []},
+	{'type': 'Submarine', 'size': 3, 'rekt': false, 'available': 1, 'location' : []},
+	{'type': 'Patrolboat', 'size': 2, 'rekt': false, 'available': 1, 'location' : []}
+];
+
 // ------ Dependencies ------
 const express = require('express');
 const http = require('http');
@@ -85,6 +93,12 @@ io.on('connection', function(socket){
 
 	//var id = socket.id; // id for each socket
 	console.log("New session made it");
+
+	var socket_session = socket.handshake.session
+	var socket_session_id = socket.handshake.sessionID;
+
+	console.log("SOCKET_SESSION:",socket_session);
+    console.log("SOCKET_SESSION_ID:",socket_session_id);
 	
 	if (players.length >= 2){ 
 		//socket.emit('RoomIsFull', true);

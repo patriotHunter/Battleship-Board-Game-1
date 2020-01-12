@@ -130,7 +130,7 @@ function tileClick(tile) {
 						ship.location.push(tile + i);
 					}
 					doneplacing();
-				}
+			}
 			} else {
 				if (parseInt(tile / 10) * 10 + 10 * ship.size < 100) {
 					paintVertical(tile, '');
