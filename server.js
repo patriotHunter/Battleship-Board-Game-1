@@ -44,7 +44,17 @@ const mysql = require('mysql');
 const crypt = require('crypto-js/sha256');
 const parser = require('body-parser');
 const cookie = require('cookie-parser');
-const session = require('express-session');
+const session = require('express-session')(
+	{
+		secret: 'radio silence',
+		saveUninitialized: true,
+		resave: true,
+		isLogged: false,
+		username: '',
+		email: '',
+		cookie: { maxAge: 18000000 } //1/2 hour in ms
+	}
+);
 const sharedsession = require("express-socket.io-session");
 
 // ------ Server ------
@@ -54,7 +64,8 @@ app.use(express.static(__dirname + '/public'));
 app.use(parser.urlencoded({ extended: false }));
 app.use(parser.json());
 app.use(cookie());
-app.use(session(sessionFormat));
+//app.use(session(sessionFormat));
+app.use(session);
 
 server.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT));
 
@@ -74,14 +85,12 @@ server.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT))
 // 	});
 // });
 
-// --- Configuration Socket io
-
-
+// --- Configuration Socket io and express-session
 io.use(sharedsession(session, {autoSave: true}));
 
-io.on('connection', function(socket){
-	players.push(socket);
-	console.log('players ',players);
+io.on('connection', function(err, socket){
+	var room = this; 
+	console.log('players ', players);
 
 	//var id = socket.id; // id for each socket
 	console.log("New session made it");
@@ -92,7 +101,8 @@ io.on('connection', function(socket){
 		return;
 	}
 
-	socket.on("login", function(userdata) {
+	
+	io.sockets.on("login", function(userdata) {
         socket.handshake.session.userdata = userdata;
         socket.handshake.session.save();
 	});
@@ -166,7 +176,6 @@ io.on('connection', function(socket){
 });
 
 // ------ Routes ------
-//app.defaultConfiguration()
 app.get('/', (req, res) => res.render('index', { status: req.session.isLogged, username: req.session.username, ships: ships }));
 app.get('/login', (req, res) => res.render('login'));
 app.get('/register', (req, res) => res.render('register'));
