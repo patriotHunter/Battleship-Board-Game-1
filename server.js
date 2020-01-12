@@ -9,7 +9,7 @@ const KEY = 'express.sid';
 const SECRET = 'express';
 
 // ------ Variables ------
-// --- Setup Variables ---
+// --- Default Variables ---
 var sessionFormat = {
 	secret: 'radio silence',
 	saveUninitialized: true,
