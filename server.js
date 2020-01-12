@@ -5,6 +5,8 @@ const DB_USER = 'root';
 const DB_PASSWORD = '';
 const DB_PORT = 3306;
 const DB_NAME = 'battleship';
+const KEY = 'express.sid';
+const SECRET = 'express';
 
 // ------ Variables ------
 // --- Setup Variables ---
@@ -73,15 +75,7 @@ server.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT))
 // });
 
 // --- Configuration Socket io
-// io.set('authorization', function(data, accept){
-// 	cookie(data, {}, function(err){
-// 		if(!err)
-// 		{
-// 			var sessionID = data.signedCookies[KEY];
-// 			store.get(session)
-// 		}
-// 	}
-// });
+
 
 io.use(sharedsession(session, {autoSave: true}));
 
@@ -172,7 +166,7 @@ io.on('connection', function(socket){
 });
 
 // ------ Routes ------
-
+//app.defaultConfiguration()
 app.get('/', (req, res) => res.render('index', { status: req.session.isLogged, username: req.session.username, ships: ships }));
 app.get('/login', (req, res) => res.render('login'));
 app.get('/register', (req, res) => res.render('register'));
