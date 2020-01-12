@@ -260,6 +260,14 @@ io.on('connection', function(socket){
 			}
 			
 		}
+
+		socket.broadcast.emit('updateBroadcast', {'coordination': obj.coordination, 'enemy': enemy});
+
+		permissionToFire(enemy.id, function(){
+			io.sockets.connected[enemy.id].emit('permissionFire', enemy);
+		});
+		console.log(enemy);
+	
 	});
 
 	//The player creation
