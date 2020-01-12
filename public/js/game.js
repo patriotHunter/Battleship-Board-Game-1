@@ -47,59 +47,90 @@ var size = 0;
 var horizontal = true;
 var placingShip = false;
 var ship = '';
-let placing = document.getElementById('allyside');
 
-placing.addEventListener('mouseover', function(event) {
-	if (placingShip) {
-		$('.tile').mouseover(function() {
-			var tileID = $(this).attr('id');
-			console.log(tileID);
-		});
+function paintHorizontal(tileID, color) {
+	for (i = 1; i < ship.size; i++) {
+		if ((tileID + i) % 10 < 9) {
+			var id = '#' + (tileID + i).toString();
+			$(id).css({ 'background-color': color });
+			//console.log('#' + (tileID + i).toString());
+		} else break;
 	}
+}
+function paintVertical(tileID, color) {
+	for (i = 1; i < ship.size; i++) {
+		var id = '#' + (tileID + i * 10).toString();
+		$(id).css({ 'background-color': color });
+	}
+}
+
+$('#allyside').hover(function() {
+	$('.tile').mouseover(function() {
+		if (placingShip) {
+			var tileID = parseInt($(this).attr('id'), 10);
+			if (horizontal) paintHorizontal(tileID, '#bdbdbd');
+			else paintVertical(tileID, '#bdbdbd');
+		}
+	});
+	$('.tile').mouseleave(function() {
+		if (placingShip) {
+			var tileID = parseInt($(this).attr('id'), 10);
+			if (horizontal) paintHorizontal(tileID, '');
+			else paintVertical(tileID, '');
+		}
+	});
+	$('.tile').contextmenu(function() {
+		if (placingShip) {
+			var tileID = parseInt($(this).attr('id'), 10);
+			if (horizontal) {
+				paintHorizontal(tileID, '');
+				paintVertical(tileID, '#bdbdbd');
+			} else {
+				paintVertical(tileID, '');
+				paintHorizontal(tileID, '#bdbdbd');
+			}
+			horizontal = !horizontal;
+		}
+	});
 });
 
 function placeShip(buttonID) {
-	ship = ships.filter(function(ships) {
-		return ships.type === buttonID;
-	});
-
-	size = ship[0].size;
+	for (i = 0; i < ships.length; i++) if (ships[i].type === buttonID) ship = ships[i];
+	size = ship.size;
 	placingShip = true;
-	console.log('Placing: ' + ship[0].type);
+	console.log('Placing: ' + ship.type);
 }
 
 function tileClick(tile) {
-	console.log(tile);
+	if (placingShip) {
+		if (horizontal) {
+			if ((tile + ship.size) % 10 < 10 && tile % 10 < (tile + ship.size) % 10) {
+				paintHorizontal(tile, '');
+				for (i = 0; i < ship.size; i++) {
+					$('#' + (tile + i).toString()).addClass('ship-tile');
+					ship.location.push(tile + i);
+				}
+				doneplacing();
+			}
+		} else {
+			if (parseInt(tile / 10) * 10 + 10 * ship.size < 100) {
+				paintVertical(tile, '');
+				for (i = 0; i < ship.size; i++) {
+					$('#' + (tile + i * 10).toString()).addClass('ship-tile');
+					ship.location.push(tile + i * 10);
+				}
+			}
+			doneplacing();
+		}
+	}
+}
+
+function doneplacing() {
+	placingShip = false;
+	if (--ship.available == 0) $('#' + ship.type).attr('disabled', true);
+	//console.log(ships);
 }
 
 function tileEnemyClick(tile) {
 	console.log('Enemy tile: ' + tile);
 }
-
-// setDef: function(el) {
-// 	if(this.$root.chosenShip == null) return;
-// 	var setCoordination = el.currentTarget.getAttribute('data-coordination');
-
-// 	var size = this.$root.chosenShip.size;
-
-// 	for (var i = 0; i < size; i++)
-// 		if(this.$root.rotated) {
-// 			if (parseInt(setCoordination.split("").reverse().join("")[0]) + size <= this.columns) {
-// 				var e = document.querySelector('[data-coordination="'+ (parseInt(setCoordination) + (i * 1)) +'"]');
-// 				e.className  = e.className == 'placed-tile' ? 'placed-tile' : 'tile';
-// 			}
-// 			else {
-// 				var e = document.querySelector('[data-coordination="'+ (parseInt(setCoordination) - ((i) * 1)) +'"]');
-// 				e.className  = e.className == 'placed-tile' ? 'placed-tile' : 'tile';
-// 			}
-// 		} else if (!this.$root.rotated) {
-// 			if (document.querySelector('[data-coordination="'+ (parseInt(setCoordination) + (i * 10)) +'"]') != null) {
-// 				var e = document.querySelector('[data-coordination="'+ (parseInt(setCoordination) + (i * 10)) +'"]');
-// 				e.className  = e.className == 'placed-tile' ? 'placed-tile' : 'tile';
-// 			}
-// 			else {
-// 				var e = document.querySelector('[data-coordination="'+ (parseInt(setCoordination) - ((size - i) * 10)) +'"]');
-// 				e.className  = e.className == 'placed-tile' ? 'placed-tile' : 'tile';
-// 			}
-// 		}
-// }
