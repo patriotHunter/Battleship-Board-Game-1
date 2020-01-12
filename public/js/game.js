@@ -15,8 +15,9 @@ new Vue({
 		ships,
 		choosenShip: null,
 		statusMessage: 'Waiting for the enemy...',
-		enemyReady: false,
-		ready: false
+		opponentReady: false,
+		ready: false,
+		canFire: false
 	}
 });
 
@@ -164,7 +165,48 @@ function tileEnemyClick(tile) {
 	console.log('Enemy tile: ' + tile);
 }
 
+
 // --- Socket implementations ---
 var socket = io();
 
+var $createGame = $('.createGame'); // need to make a reference from a html page
+var $joinGame = $('.joinGame');
+
 socket.on('prepareBattleship', function() {});
+
+socket.on('playerJoined', function() {
+    vm.statusMessage = 'Not ready';
+});
+
+socket.on('opponentLeft', function () {
+    vm.statusMessage = 'Opponent left';
+});
+
+socket.on('opponentReady', function () {
+    vm.statusMessage = 'Opponent is ready';
+});
+
+socket.on('canFire', function(){
+	if (player.id)
+	vm.canFire = true;
+	else 
+	vm.canFire = false;
+});
+
+socket.on('win', function(obj){
+	alert('You Win!');
+});
+
+socket.on('takeFire', function(obj){
+
+	// if()
+	// {
+	// 	alert("You lose!");
+	// }
+
+	// var tile = document;
+});
+
+socket.on('hit', function(){
+
+});
