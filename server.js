@@ -44,8 +44,8 @@ const mysql = require('mysql');
 const crypt = require('crypto-js/sha256');
 const parser = require('body-parser');
 const cookie = require('cookie-parser');
-const session = require('express-session')(
-	{
+//const session = require('express-session')
+const session = require('express-session')({
 		secret: 'radio silence',
 		saveUninitialized: true,
 		resave: true,
@@ -53,8 +53,8 @@ const session = require('express-session')(
 		username: '',
 		email: '',
 		cookie: { maxAge: 18000000 } //1/2 hour in ms
-	}
-);
+	});
+
 const sharedsession = require("express-socket.io-session");
 
 // ------ Server ------
@@ -87,9 +87,9 @@ server.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT))
 
 // --- Configuration Socket io and express-session
 io.use(sharedsession(session, {autoSave: true}));
+//io.use(sharedsession(session));
 
 io.on('connection', function(err, socket){
-	var room = this; 
 	console.log('players ', players);
 
 	//var id = socket.id; // id for each socket
@@ -102,15 +102,17 @@ io.on('connection', function(err, socket){
 	}
 
 	
-	io.sockets.on("login", function(userdata) {
+	socket.on("login", function(userdata) {
         socket.handshake.session.userdata = userdata;
         socket.handshake.session.save();
 	});
 	
 	socket.on("logout", function(userdata) {
-        delete socket.handshake.session.userdata;
-        socket.handshake.session.save();
-    });
+        if (socket.handshake.session.userdata) {
+            delete socket.handshake.session.userdata;
+            socket.handshake.session.save();
+        }
+    });      
 
 
 	socket.on('place', function(ship){
