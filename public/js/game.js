@@ -207,3 +207,7 @@ socket.on('takeFire', function(obj){
 socket.on('hit', function(){
 
 });
+
+socket.on('joined', function(room) {
+	alert('Joined room: ', room);
+});

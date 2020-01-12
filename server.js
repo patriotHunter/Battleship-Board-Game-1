@@ -86,14 +86,29 @@ server.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT))
 
 // --- Configuration Socket io and express-session
 //io.use(sharedsession(session, {autoSave: true}));
+var room = [];
 
 io.on('connection', function(socket) {
+	socket.on('ready', function(player) {
+		if (room.length == 0) {
+			var roomName = (Math.random() + 1).toString(36).slice(2, 18);
+			room.push({ name: roomName, players: 1 });
+			socket.join(roomName);
+			return socket.emit('joined', roomName);
+		} else {
+			for (i = 0; i < room.length; i++) {
+				if (room[i].players == 1) {
+					socket.join(roomName);
+					return socket.emit('joined', roomName);
+				}
+			}
+		}
+	});
+
 	var id = socket.id;
 	console.log('Player: ' + id + ' joined the room');
 
-	socket.on('ready', function(player) {
-		console.log('Player: ' + player + ' is ready for battle!');
-	});
+	
 	
 	console.log('Players ', players.length);
 	if (players.length >= 2){ 
@@ -101,6 +116,8 @@ io.on('connection', function(socket) {
 		console.log('Room is full');
 		return;
 	}
+
+	players.push({ id: id, ready: true, takenHits: 0, permissionToFire: false, ships: [] });
 	
 	// var socket_session = socket.handshake.session;
 	// var socket_session_id = socket.handshake.sessionID;
