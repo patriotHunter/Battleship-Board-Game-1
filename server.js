@@ -245,21 +245,21 @@ function checkDatabase() {
 							console.log('Database ' + DB_NAME + ' created!');
 							database.query('USE ' + DB_NAME, function(error, result) {
 								if (error) throw error;
-								else checkTables();
+								else checkTableUser();
 							});
 						}
 					});
-				} else checkTables();
+				} else checkTableUser();
 			});
 		}
 	});
 }
 
-function checkTables() {
+function checkTableUser() {
 	console.log('Checking for users table...');
 	database.query('SELECT NULL FROM user', function(error, result) {
 		if (error) {
-			console.log('Error! Table users not found! Creating...');
+			console.log('Error! Table user not found! Creating...');
 			database.query(
 				'CREATE TABLE user(id INT AUTO_INCREMENT PRIMARY key NOT NULL,' +
 					'username VARCHAR(50) NOT NULL,' +
@@ -269,6 +269,39 @@ function checkTables() {
 					if (err) console.log(err);
 					if (result) {
 						console.log('Table user created!');
+						console.log('Setup was correct!');
+						console.log('Welcome aboard captain!');
+						checkTableGames();
+					}
+				}
+			);
+		}
+		if (result) {
+			console.log('Everything looks ready!');
+			checkTableGames();
+		}
+	});
+}
+function checkTableGames() {
+	console.log('Checking for games table...');
+	database.query('SELECT NULL FROM game', function(error, result) {
+		if (error) {
+			console.log('Error! Table games not found! Creating...');
+			database.query(
+				'CREATE TABLE game(' +
+					'id INT AUTO_INCREMENT PRIMARY key NOT NULL,' +
+					'player1 INT NOT NULL,' +
+					'player2 INT NOT NULL,' +
+					'gameState longtext NOT NULL,' +
+					'shipPlayer1 longtext NOT NULL,' +
+					'shipPlayer2 longtext NOT NULL,' +
+					'CONSTRAINT P1 FOREIGN KEY (player1) REFERENCES user(id),' +
+					'CONSTRAINT P2 FOREIGN KEY (player2) REFERENCES user(id)' +
+					')',
+				function(err, result) {
+					if (err) console.log(err);
+					if (result) {
+						console.log('Table game created!');
 						console.log('Setup was correct!');
 						console.log('Welcome aboard captain!');
 					}
@@ -281,7 +314,6 @@ function checkTables() {
 		}
 	});
 }
-
 checkDatabase();
 
 // ------ Queries ------
