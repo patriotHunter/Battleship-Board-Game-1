@@ -248,6 +248,11 @@ io.on('connection', function(socket){
 			enemy.takenHits++;
 			console.log('Hit! ' + obj.coordination);
 			console.log('Hit!', {'coordination' : obj.coordination, 'hit' : hit});
+
+			if (enemy.takenHits >= 17) // If hits all the ships (5+4+3+3+2 = 17) wins
+			{
+				socket.emit('win', enemy);
+			}
 			
 		}
 	});
