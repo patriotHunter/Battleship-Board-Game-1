@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <%- include('head') %>
     <title>Battleship</title>
@@ -11,6 +10,8 @@
     <div class="content" oncontextmenu="return false;">
         <%- include('content/game') %>
     </div>
+    <input type='hidden' id='sessionID' value="<%=session%>">
+
 </body>
 
 </html>

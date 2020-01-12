@@ -57,6 +57,9 @@ var placingShip = false;
 var ship = '';
 var shipsToPlace = ships.length;
 var readyToPlay = false;
+var player;
+$(document).ready(() => player = $('#sessionID').val());
+
 
 function paintHorizontal(tileID, color) {
 	for (i = 1; i < ship.size; i++) {
@@ -150,7 +153,11 @@ function tileClick(tile) {
 function doneplacing() {
 	placingShip = false;
 	if (--ship.available == 0) $('#' + ship.type).attr('disabled', true);
-	if(--shipsToPlace == 0) readyToPlay = true;
+	if (--shipsToPlace == 0) {
+		readyToPlay = true;
+		socket.emit('ready', player);
+		console.log('sent data');
+	}
 	//console.log(ships);
 }
 
@@ -158,7 +165,8 @@ function tileEnemyClick(tile) {
 	console.log('Enemy tile: ' + tile);
 }
 
+
 // --- Socket implementations ---
-var socket = io('');
+var socket = io();
 
 socket.on('prepareBattleship', function() {});
