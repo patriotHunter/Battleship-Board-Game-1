@@ -239,6 +239,17 @@ io.on('connection', function(socket){
 		});
 		console.log("Enemy", enemy.id);
 
+		var hit = enemy.ships
+					.map(ship => ship.location)
+					.some(coordinates => coordinates.some(coordinate => coordinate == obj.coordination))
+					
+		if (hit)
+		{
+			enemy.takenHits++;
+			console.log('Hit! ' + obj.coordination);
+			console.log('Hit!', obj.coordination);
+			
+		}
 	});
 
 	//The player creation
