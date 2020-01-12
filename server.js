@@ -247,7 +247,7 @@ io.on('connection', function(socket){
 		{
 			enemy.takenHits++;
 			console.log('Hit! ' + obj.coordination);
-			console.log('Hit!', obj.coordination);
+			console.log('Hit!', {'coordination' : obj.coordination, 'hit' : hit});
 			
 		}
 	});
