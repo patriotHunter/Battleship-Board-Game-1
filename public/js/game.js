@@ -170,6 +170,9 @@ function tileEnemyClick(tile) {
 // --- Socket implementations ---
 var socket = io();
 
+var $createGame = $('.createGame'); // need to make a reference from a html page
+var $joinGame = $('.joinGame');
+
 socket.on('prepareBattleship', function() {});
 
 socket.on('playerJoined', function() {
