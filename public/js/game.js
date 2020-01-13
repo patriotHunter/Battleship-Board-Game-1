@@ -21,6 +21,9 @@ new Vue({
 	}
 });
 
+//----POST VUE!-----
+
+//------ Variables ------
 var ships = [
 	{ type: 'Carrier', size: 5, sank: false, available: 1, location: [] },
 	{ type: 'Battleship', size: 4, sank: false, available: 1, location: [] },
@@ -29,6 +32,18 @@ var ships = [
 	{ type: 'Destroyer', size: 2, sank: false, available: 1, location: [] }
 ];
 
+var size = 0;
+var horizontal = true;
+var placingShip = false;
+var ship = '';
+var shipsToPlace = ships.length;
+var readyToPlay = false;
+var player = $('#sessionID').val();
+var socket = io();
+var hits = 0; //17hits
+var room;
+
+//------ General functions ------
 window.addEventListener('load', init);
 window.addEventListener('resize', init);
 
@@ -52,14 +67,6 @@ for (i in ships) {
 	);
 }
 
-var size = 0;
-var horizontal = true;
-var placingShip = false;
-var ship = '';
-var shipsToPlace = ships.length;
-var readyToPlay = false;
-var player;
-$(document).ready(() => (player = $('#sessionID').val()));
 
 function paintHorizontal(tileID, color) {
 	for (i = 1; i < ship.size; i++) {
@@ -152,61 +159,59 @@ function tileClick(tile) {
 
 function doneplacing() {
 	placingShip = false;
-	if (--ship.available == 0) $('#' + ship.type).attr('disabled', true);
-	if (--shipsToPlace == 0) {
-		readyToPlay = true;
+	if (--ship.available == 0) {
+		$('#' + ship.type).attr('disabled', true);
+		hits += ship.size;
+	}
+	if (--shipsToPlace == 4) {
 		socket.emit('ready', player);
-		console.log('sent data');
 	}
 	//console.log(ships);
 }
 
 function tileEnemyClick(tile) {
-	console.log('Enemy tile: ' + tile);
+	if (readyToPlay) {
+		var id = '#enemy_' + tile.toString();
+		if ($(id).hasClass('hit-tile') || $(id).hasClass('missed-tile')) return;
+		else {
+			readyToPlay = false;
+			socket.emit('fire', { room: room, tile: tile });
+		}
+	}
 }
 
-
-// --- Socket implementations ---
-var socket = io();
-
-var $createGame = $('.createGame'); // need to make a reference from a html page
-var $joinGame = $('.joinGame');
-
-socket.on('prepareBattleship', function() {});
-
-socket.on('playerJoined', function() {
-    vm.statusMessage = 'Not ready';
+// ------ Socket Communication ------
+socket.on('joined', (data) => {
+	room = data.room;
+	readyToPlay = data.turn;
 });
 
-socket.on('opponentLeft', function () {
-    vm.statusMessage = 'Opponent left';
+socket.on('fired', function(tile) {
+	readyToPlay = true;
+	var id = '#' + tile.toString();
+	if ($(id).hasClass('ship-tile')) {
+		$(id).removeClass('ship-tile');
+		$(id).addClass('hit-tile');
+		socket.emit('hit', { room: room, tile: tile });
+	} else {
+		$(id).addClass('missed-tile');
+		socket.emit('miss', { room: room, tile: tile });
+	}
 });
 
-socket.on('opponentReady', function () {
-    vm.statusMessage = 'Opponent is ready';
+socket.on('hited', function(tile) {
+	var id = '#enemy_' + tile.toString();
+	$(id).addClass('hit-tile');
+	hits--;
+	if (hits === 0) {
+		alert('Sorry, you lose!');
+		socket.emit('win', { room: room, msg: 'GG!' });
+	}
 });
 
-socket.on('canFire', function(){
-	if (player.id)
-	vm.canFire = true;
-	else 
-	vm.canFire = false;
+socket.on('missed', function(tile) {
+	var id = '#enemy_' + tile.toString();
+	$(id).addClass('missed-tile');
 });
 
-socket.on('win', function(obj){
-	alert('You Win!');
-});
-
-socket.on('takeFire', function(obj){
-
-	// if()
-	// {
-	// 	alert("You lose!");
-	// }
-
-	// var tile = document;
-});
-
-socket.on('hit', function(){
-
-});
+socket.on('won', (data) => alert('You win! \n' + data));
