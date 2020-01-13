@@ -67,7 +67,6 @@ for (i in ships) {
 	);
 }
 
-
 function paintHorizontal(tileID, color) {
 	for (i = 1; i < ship.size; i++) {
 		if ((tileID + i) % 10 < 9) {
@@ -180,10 +179,18 @@ function tileEnemyClick(tile) {
 	}
 }
 
+function joinRoom() {
+	//console.log($('#username').html());
+	socket.emit('join', $('#username').html());
+}
+
 // ------ Socket Communication ------
+
 socket.on('joined', (data) => {
+	$('#joinroom').fadeOut();
 	room = data.room;
 	readyToPlay = data.turn;
+	$('#nameRoom').html('Room name: ' + room);
 });
 
 socket.on('fired', function(tile) {
@@ -193,6 +200,11 @@ socket.on('fired', function(tile) {
 		$(id).removeClass('ship-tile');
 		$(id).addClass('hit-tile');
 		socket.emit('hit', { room: room, tile: tile });
+		hits--;
+		if (hits === 0) {
+			alert('Sorry, you lose!');
+			socket.emit('win', { room: room, msg: 'GG!' });
+		}
 	} else {
 		$(id).addClass('missed-tile');
 		socket.emit('miss', { room: room, tile: tile });
@@ -202,11 +214,6 @@ socket.on('fired', function(tile) {
 socket.on('hited', function(tile) {
 	var id = '#enemy_' + tile.toString();
 	$(id).addClass('hit-tile');
-	hits--;
-	if (hits === 0) {
-		alert('Sorry, you lose!');
-		socket.emit('win', { room: room, msg: 'GG!' });
-	}
 });
 
 socket.on('missed', function(tile) {

@@ -4,7 +4,8 @@
     <table id='allyside'>
         <tr v-for="n in rows">
             <template v-for="i in columns">
-                <td id="{{ n == 0 ? i : n + '' + i}}" class="tile" onclick="tileClick( {{ n == 0 ? i : n + '' + i}} )"></td>
+                <td id="{{ n == 0 ? i : n + '' + i}}" class="tile" onclick="tileClick( {{ n == 0 ? i : n + '' + i}} )">
+                </td>
             </template>
         </tr>
     </table>
@@ -14,15 +15,23 @@
     <table id='enemyside'>
         <tr v-for="n in rows">
             <template v-for="i in columns">
-                <td id="enemy_{{ n == 0 ? i : n + '' + i}}" class="tile" onclick="tileEnemyClick( {{ n == 0 ? i : n + '' + i}} )"></td>
+                <td id="enemy_{{ n == 0 ? i : n + '' + i}}" class="tile"
+                    onclick="tileEnemyClick( {{ n == 0 ? i : n + '' + i}} )"></td>
             </template>
         </tr>
     </table>
 </template>
 
+<div id='joinroom'>
+    <button class='main-buttons' onclick="joinRoom()">Join Room!</button>
+</div>
 <!-- infoBoard -->
-<div id='nameEnemy'>Playing against:</div>
-
+<div id='infoBoard'>
+    <div id='my-state'>Not Ready</div>
+    <div id='nameRoom'></div>
+    <div id='nameEnemy'>Playing against:</div>
+    <div id='foe-state'>Not Ready</div>
+</div>
 <!-- game -->
 <div id="main_game">
     <div id="boards">

@@ -10,7 +10,7 @@ const SECRET = 'express';
 
 // ------ Variables ------
 var room = [];
-
+var users = [];
 // ------ Dependencies ------
 const express = require('express');
 const http = require('http');
@@ -49,18 +49,24 @@ server.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT))
 // ------ Communication ------
 
 io.on('connection', function(socket) {
-	socket.on('ready', function(player) {
+	socket.on('join', function(data) {
 		for (i = 0; i < room.length; i++) {
-			console.log(room[i]);
 			if (room[i].players === 1) {
 				room[i].players = 2;
 				socket.join(room[i].name);
+				for (j = 0; j < users.length; j++) {
+					if (users[j].room == room[i].name) {
+						users[j].player2 = data;
+						break;
+					}
+				}
 				return socket.emit('joined', { room: room[i].name, turn: true });
 			}
 		}
 		var roomName = (Math.random() + 1).toString(36).slice(2, 18);
 		room.push({ name: roomName, players: 1 });
 		socket.join(roomName);
+		users.push({ player1: data, player2:'', room: roomName });
 		return socket.emit('joined', { room: roomName, turn: false });
 	});
 
@@ -69,25 +75,16 @@ io.on('connection', function(socket) {
 	socket.on('miss', (data) => socket.broadcast.to(data.room).emit('missed', data.tile));
 	socket.on('win', (data) => socket.broadcast.to(data.room).emit('won', data.msg));
 
-	socket.on('login', function(userdata) {
-		socket.handshake.session.userdata = userdata;
-		socket.handshake.session.save();
-	});
-	socket.on('logout', function(userdata) {
-		if (socket.handshake.session.userdata) {
-			delete socket.handshake.session.userdata;
-			socket.handshake.session.save();
-		}
-	});
-	socket.on('disconnect', function() {
-		console.log('Player ', socket.id, ' left the game');
-	});
+	// socket.on('disconnect', function() {
+	// 	//console.log('Player ', socket.id, ' left the game');
+	// });
 });
 
 // ------ Routes ------
-app.get('/', (req, res) =>
-	res.render('index', { session: req.sessionID, status: req.session.isLogged, username: req.session.username })
-);
+app.get('/', (req, res) => {
+	if (req.session.isLogged) res.render('index', { status: true, username: req.session.username });
+	else res.render('index', { status: false, username: 'Guest_' + (Math.random() + 1).toString(9).slice(2, 5) });
+});
 
 app.get('/login', (req, res) => {
 	io.emit('login', req.session);
@@ -120,6 +117,7 @@ app.post('/register', function(req, res) {
 				req.session.isLogged = true;
 				req.session.username = req.body.name;
 				req.session.email = req.body.email;
+				// users.push({ username: req.session.username, email: req.session.email });
 				res.send('Done!');
 			}
 		);
@@ -132,6 +130,7 @@ app.post('/login', function(req, res) {
 			req.session.isLogged = true;
 			req.session.username = result[0].username;
 			req.session.email = result[0].email;
+			// users.push({ username: req.session.username, email: req.session.email });
 			res.send('done!');
 		}
 	});
