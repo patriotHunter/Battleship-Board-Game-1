@@ -163,7 +163,7 @@ function doneplacing() {
 		$('#' + ship.type).attr('disabled', true);
 		hits += ship.size;
 	}
-	if (--shipsToPlace == 4) {
+	if (--shipsToPlace == 0) {
 		socket.emit('ready', player);
 	}
 	//console.log(ships);
