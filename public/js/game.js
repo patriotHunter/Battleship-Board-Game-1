@@ -191,7 +191,7 @@ function joinRoom() {
 
 function save() {
 	if (typeof $('#mail').val() != 'undefined' && enemyloged) socket.emit('save', room);
-	else alert('One of the players is not logged');
+	else alert('Your enemy is not logged');
 }
 function load() {}
 
