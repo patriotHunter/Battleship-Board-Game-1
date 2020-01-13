@@ -31,6 +31,9 @@ td {
 .ship-tile {
 	background-color: #787878;
 }
+.ship-tile-dark {
+	background-color: #fff;
+}
 .missed-tile {
 	background: #2eccfa;
 }
@@ -126,7 +129,6 @@ td {
 	margin: 10px;
 	font-size: 18px;
 }
-
 
 #save {
 	position: relative;

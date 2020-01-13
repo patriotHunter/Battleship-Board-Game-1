@@ -137,7 +137,8 @@ function tileClick(tile) {
 				if ((tile + ship.size) % 10 < 10 && tile % 10 < (tile + ship.size) % 10) {
 					paintHorizontal(tile, '');
 					for (i = 0; i < ship.size; i++) {
-						$('#' + (tile + i).toString()).addClass('ship-tile');
+						if (darkMode) $('#' + (tile + i).toString()).addClass('ship-tile-dark');
+						else $('#' + (tile + i).toString()).addClass('ship-tile');
 						ship.location.push(tile + i);
 					}
 					doneplacing();
@@ -147,7 +148,8 @@ function tileClick(tile) {
 				if (parseInt(tile / 10) * 10 + 10 * ship.size < 100) {
 					paintVertical(tile, '');
 					for (i = 0; i < ship.size; i++) {
-						$('#' + (tile + i * 10).toString()).addClass('ship-tile');
+						if (darkMode) $('#' + (tile + i * 10).toString()).addClass('ship-tile-dark');
+						else $('#' + (tile + i * 10).toString()).addClass('ship-tile');
 						ship.location.push(tile + i * 10);
 					}
 					doneplacing();
@@ -186,7 +188,7 @@ function tileEnemyClick(tile) {
 
 function joinRoom() {
 	//console.log($('#username').html());
-	socket.emit('join', {name:$('#username').html(), mail: $('#mail').val()});
+	socket.emit('join', { name: $('#username').html(), mail: $('#mail').val() });
 }
 
 function save() {

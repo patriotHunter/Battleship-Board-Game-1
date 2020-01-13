@@ -115,13 +115,13 @@ io.on('connection', function(socket) {
 		}
 	});
 	socket.on('arrive', (data) => {
-		console.log('arrive: ' + data.mail);
+		//console.log('arrive: ' + data.mail);
 		if (typeof data.mail == 'undefined')
 			socket.broadcast.to(data.room).emit('newuser', { name: data.name, login: false });
 		else socket.broadcast.to(data.room).emit('newuser', { name: data.name, login: true });
 	});
 	socket.on('setname', (data) => {
-		console.log('set: ' + data.mail);
+		//console.log('set: ' + data.mail);
 
 		if (typeof data.mail == 'undefined')
 			socket.broadcast.to(data.room).emit('getname', { name: data.name, login: false });
