@@ -42,6 +42,7 @@ var player = $('#sessionID').val();
 var socket = io();
 var hits = 0; //17hits
 var room;
+var enemyloged = false;
 
 //------ General functions ------
 window.addEventListener('load', init);
@@ -185,8 +186,14 @@ function tileEnemyClick(tile) {
 
 function joinRoom() {
 	//console.log($('#username').html());
-	socket.emit('join', $('#username').html());
+	socket.emit('join', {name:$('#username').html(), mail: $('#mail').val()});
 }
+
+function save() {
+	if (typeof $('#mail').val() != 'undefined' && enemyloged) socket.emit('save', room);
+	else alert('One of the players is not logged');
+}
+function load() {}
 
 // ------ Socket Communication ------
 
@@ -195,17 +202,23 @@ socket.on('joined', (data) => {
 		$('#joinroom').fadeOut();
 		room = data.room;
 		$('#nameRoom').html('Room name: ' + room);
-		socket.emit('arrive', { room: room, name: 'Enemy: ' + $('#username').html() });
+		socket.emit('arrive', { room: room, name: $('#username').html(), mail: $('#mail').val() });
 	} else alert(data.msg);
 });
 
 socket.on('newuser', function(data) {
-	$('#nameEnemy').html(data);
-	socket.emit('setname', { room: room, name: 'Enemy: ' + $('#username').html() });
+	enemyloged = data.login;
+	$('#nameEnemy').html('Enemy: ' + data.name);
+	socket.emit('setname', { room: room, name: $('#username').html(), mail: $('#mail').val() });
 	if ($('#my-state').html() == 'Ready') socket.emit('ready', { room: room });
+	console.log(enemyloged);
 });
 
-socket.on('getname', (data) => $('#nameEnemy').html(data));
+socket.on('getname', (data) => {
+	$('#nameEnemy').html('Enemy: ' + data.name);
+	enemyloged = data.login;
+	console.log(enemyloged);
+});
 
 socket.on('fired', function(tile) {
 	readyToPlay = true;
@@ -249,3 +262,7 @@ socket.on('missed', function(tile) {
 });
 
 socket.on('won', (data) => alert('You win! \n' + data));
+socket.on('request-save', () =>
+	socket.emit('save', { room: room, user: $('#username').html(), email: $('#mail').val() })
+);
+socket.on('save-answer', (data) => alert(data));

@@ -59,11 +59,13 @@ io.on('connection', function(socket) {
 						for (j = 0; j < users.length; j++) {
 							if (users[j].room == room[i].name) {
 								if (users[j].player1 != '') {
-									users[j].player2 = data;
+									users[j].player2 = data.name;
 									users[j].player2id = socket.id;
+									users[j].player2mail = data.mail;
 								} else {
-									users[j].player1 = data;
+									users[j].player1 = data.name;
 									users[j].player1id = socket.id;
+									users[j].player1mail = data.mail;
 								}
 								break;
 							}
@@ -75,9 +77,16 @@ io.on('connection', function(socket) {
 				var roomName = (Math.random() + 1).toString(36).slice(2, 18);
 				room.push({ name: roomName, numplayers: 1 });
 				socket.join(roomName);
-				users.push({ player1: data, player1id: socket.id, player2: '', player2id: '', room: roomName });
+				users.push({
+					player1: data.name,
+					player1id: socket.id,
+					player1mail: data.mail,
+					player2: '',
+					player2id: '',
+					player2mail: '',
+					room: roomName
+				});
 				return socket.emit('joined', { room: roomName });
-				break;
 
 			case 'string':
 				for (i = 0; i < room.length; i++) {
@@ -88,11 +97,13 @@ io.on('connection', function(socket) {
 							for (j = 0; j < users.length; j++) {
 								if (users[j].room == room[i].name) {
 									if (users[j].player1 != '') {
-										users[j].player2 = data;
+										users[j].player2 = data.name;
 										users[j].player2id = socket.id;
+										users[j].player2mail = data.mail;
 									} else {
-										users[j].player1 = data;
+										users[j].player1 = data.name;
 										users[j].player1id = socket.id;
+										users[j].player1mail = data.mail;
 									}
 									break;
 								}
@@ -103,8 +114,19 @@ io.on('connection', function(socket) {
 				}
 		}
 	});
-	socket.on('arrive', (data) => socket.broadcast.to(data.room).emit('newuser', data.name));
-	socket.on('setname', (data) => socket.broadcast.to(data.room).emit('getname', data.name));
+	socket.on('arrive', (data) => {
+		console.log('arrive: ' + data.mail);
+		if (typeof data.mail == 'undefined')
+			socket.broadcast.to(data.room).emit('newuser', { name: data.name, login: false });
+		else socket.broadcast.to(data.room).emit('newuser', { name: data.name, login: true });
+	});
+	socket.on('setname', (data) => {
+		console.log('set: ' + data.mail);
+
+		if (typeof data.mail == 'undefined')
+			socket.broadcast.to(data.room).emit('getname', { name: data.name, login: false });
+		else socket.broadcast.to(data.room).emit('getname', { name: data.name, login: true });
+	});
 	socket.on('ready', (data) => socket.broadcast.to(data.room).emit('enemy-ready'));
 	socket.on('fire', (data) => socket.broadcast.to(data.room).emit('fired', data.tile));
 	socket.on('hit', (data) => socket.broadcast.to(data.room).emit('hited', data.tile));
@@ -135,11 +157,21 @@ io.on('connection', function(socket) {
 			}
 		}
 	});
+
+	socket.on('save', (data) => {
+		for (i = 0; i < room.length; i++) {
+			if (room[i].roomName == data.room) {
+				var p1 = room[i].player1mail;
+				var p2 = room[i].player2mail;
+			}
+		}
+	});
 });
 
 // ------ Routes ------
 app.get('/', (req, res) => {
-	if (req.session.isLogged) res.render('index', { status: true, username: req.session.username });
+	if (req.session.isLogged)
+		res.render('index', { status: true, username: req.session.username, email: req.session.email });
 	else res.render('index', { status: false, username: 'Guest_' + (Math.random() + 1).toString(9).slice(2, 5) });
 });
 
