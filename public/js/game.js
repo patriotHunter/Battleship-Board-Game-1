@@ -163,19 +163,23 @@ function doneplacing() {
 		hits += ship.size;
 	}
 	if (--shipsToPlace == 0) {
-		socket.emit('ready', player);
+		$('#my-state').css({ color: 'rgb(10, 140, 9)' });
+		$('#my-state').html('Ready');
+		socket.emit('ready', { room: room });
 	}
 	//console.log(ships);
 }
 
 function tileEnemyClick(tile) {
-	if (readyToPlay) {
+	if (readyToPlay && $('#foe-state').html() == 'Ready' && $('#my-state').html() == 'Ready') {
 		var id = '#enemy_' + tile.toString();
 		if ($(id).hasClass('hit-tile') || $(id).hasClass('missed-tile')) return;
 		else {
-			readyToPlay = false;
 			socket.emit('fire', { room: room, tile: tile });
 		}
+		readyToPlay = !readyToPlay;
+		$('#turn').html("Enemy's turn");
+		$('#turn').css({ color: 'red' });
 	}
 }
 
@@ -187,14 +191,27 @@ function joinRoom() {
 // ------ Socket Communication ------
 
 socket.on('joined', (data) => {
-	$('#joinroom').fadeOut();
-	room = data.room;
-	readyToPlay = data.turn;
-	$('#nameRoom').html('Room name: ' + room);
+	if (typeof data.msg == 'undefined') {
+		$('#joinroom').fadeOut();
+		room = data.room;
+		$('#nameRoom').html('Room name: ' + room);
+		socket.emit('arrive', { room: room, name: 'Enemy: ' + $('#username').html() });
+	} else alert(data.msg);
 });
+
+socket.on('newuser', function(data) {
+	$('#nameEnemy').html(data);
+	socket.emit('setname', { room: room, name: 'Enemy: ' + $('#username').html() });
+	if ($('#my-state').html() == 'Ready') socket.emit('ready', { room: room });
+});
+
+socket.on('getname', (data) => $('#nameEnemy').html(data));
 
 socket.on('fired', function(tile) {
 	readyToPlay = true;
+	$('#turn').html('Your turn');
+	$('#turn').css({ color: 'rgb(10, 140, 9)' });
+
 	var id = '#' + tile.toString();
 	if ($(id).hasClass('ship-tile')) {
 		$(id).removeClass('ship-tile');
@@ -208,6 +225,16 @@ socket.on('fired', function(tile) {
 	} else {
 		$(id).addClass('missed-tile');
 		socket.emit('miss', { room: room, tile: tile });
+	}
+});
+
+socket.on('enemy-ready', () => {
+	$('#foe-state').html('Ready');
+	$('#foe-state').css({ color: 'rgb(10, 140, 9)' });
+	if ($('#my-state').html() == 'Ready') {
+		readyToPlay = true;
+		$('#turn').html('Your turn');
+		$('#turn').css({ color: 'rgb(10, 140, 9)' });
 	}
 });
 

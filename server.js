@@ -50,34 +50,91 @@ server.listen(PORT, () => console.log('First ship has sailed on port: ' + PORT))
 
 io.on('connection', function(socket) {
 	socket.on('join', function(data) {
-		for (i = 0; i < room.length; i++) {
-			if (room[i].players === 1) {
-				room[i].players = 2;
-				socket.join(room[i].name);
-				for (j = 0; j < users.length; j++) {
-					if (users[j].room == room[i].name) {
-						users[j].player2 = data;
-						break;
+		switch (typeof data.room) {
+			case 'undefined':
+				for (i = 0; i < room.length; i++) {
+					if (room[i].numplayers === 1) {
+						room[i].numplayers = 2;
+						socket.join(room[i].name);
+						for (j = 0; j < users.length; j++) {
+							if (users[j].room == room[i].name) {
+								if (users[j].player1 != '') {
+									users[j].player2 = data;
+									users[j].player2id = socket.id;
+								} else {
+									users[j].player1 = data;
+									users[j].player1id = socket.id;
+								}
+								break;
+							}
+						}
+
+						return socket.emit('joined', { room: room[i].name });
 					}
 				}
-				return socket.emit('joined', { room: room[i].name, turn: true });
-			}
-		}
-		var roomName = (Math.random() + 1).toString(36).slice(2, 18);
-		room.push({ name: roomName, players: 1 });
-		socket.join(roomName);
-		users.push({ player1: data, player2:'', room: roomName });
-		return socket.emit('joined', { room: roomName, turn: false });
-	});
+				var roomName = (Math.random() + 1).toString(36).slice(2, 18);
+				room.push({ name: roomName, numplayers: 1 });
+				socket.join(roomName);
+				users.push({ player1: data, player1id: socket.id, player2: '', player2id: '', room: roomName });
+				return socket.emit('joined', { room: roomName });
+				break;
 
+			case 'string':
+				for (i = 0; i < room.length; i++) {
+					if (room[i].name == data.room) {
+						if (room[i].numplayers === 1) {
+							room[i].numplayers = 2;
+							socket.join(room[i].name);
+							for (j = 0; j < users.length; j++) {
+								if (users[j].room == room[i].name) {
+									if (users[j].player1 != '') {
+										users[j].player2 = data;
+										users[j].player2id = socket.id;
+									} else {
+										users[j].player1 = data;
+										users[j].player1id = socket.id;
+									}
+									break;
+								}
+							}
+							return socket.emit('joined', { room: room[i].name });
+						} else return socket.emit('joined', { room: room[i].name, msg: 'Is full!' });
+					}
+				}
+		}
+	});
+	socket.on('arrive', (data) => socket.broadcast.to(data.room).emit('newuser', data.name));
+	socket.on('setname', (data) => socket.broadcast.to(data.room).emit('getname', data.name));
+	socket.on('ready', (data) => socket.broadcast.to(data.room).emit('enemy-ready'));
 	socket.on('fire', (data) => socket.broadcast.to(data.room).emit('fired', data.tile));
 	socket.on('hit', (data) => socket.broadcast.to(data.room).emit('hited', data.tile));
 	socket.on('miss', (data) => socket.broadcast.to(data.room).emit('missed', data.tile));
 	socket.on('win', (data) => socket.broadcast.to(data.room).emit('won', data.msg));
 
-	// socket.on('disconnect', function() {
-	// 	//console.log('Player ', socket.id, ' left the game');
-	// });
+	socket.on('disconnect', function() {
+		for (i = 0; i < users.length; i++) {
+			if (users[i].player1id == socket.id || users[i].player2id == socket.id) {
+				for (j = 0; j < room.length; j++) {
+					if (room[j].room == users[i].roomName) {
+						// console.log(room);
+						// console.log(users);
+						if (users[i].player1id == socket.id) {
+							users[i].player1 = '';
+							users[i].player1id = '';
+						} else {
+							users[i].player2 = '';
+							users[i].player2id = '';
+						}
+						room[j].numplayers--;
+						if (room[j].numplayers == 0) {
+							users.splice(i, 1);
+							room.splice(j, 1);
+						}
+					}
+				}
+			}
+		}
+	});
 });
 
 // ------ Routes ------

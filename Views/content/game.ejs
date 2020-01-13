@@ -23,13 +23,19 @@
 </template>
 
 <div id='joinroom'>
-    <button class='main-buttons' onclick="joinRoom()">Join Room!</button>
+    <div class='main-buttons-wrapper'>
+        <button class='main-buttons' onclick="joinRoom()">Join Room!</button>
+        <% if(status){%>
+        <button class='main-buttons' onclick="Load()">Load</button>
+        <%}%>
+    </div>
 </div>
 <!-- infoBoard -->
 <div id='infoBoard'>
     <div id='my-state'>Not Ready</div>
+    <div id='turn'></div>
     <div id='nameRoom'></div>
-    <div id='nameEnemy'>Playing against:</div>
+    <div id='nameEnemy'></div>
     <div id='foe-state'>Not Ready</div>
 </div>
 <!-- game -->
@@ -40,7 +46,11 @@
     </div>
 </div>
 <div id='shipspawn'></div>
-
+<br>
+<% if(status){%>
+        <div id='savegame'><button id='save' onClick=save()>Save Game</buton>
+        </div>
+        <%}%>
 
 
 
