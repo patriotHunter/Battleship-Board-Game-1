@@ -168,6 +168,10 @@ function doneplacing() {
 	if (--shipsToPlace == 0) {
 		$('#my-state').css({ color: 'rgb(10, 140, 9)' });
 		$('#my-state').html('Ready');
+		if($('#foe-state').html() == 'Ready'){
+			$('#turn').html("Enemy's turn");
+			$('#turn').css({ color: 'red' });
+		}
 		socket.emit('ready', { room: room });
 	}
 	//console.log(ships);
