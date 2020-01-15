@@ -41,6 +41,8 @@ var readyToPlay = false;
 var player = $('#sessionID').val();
 var socket = io();
 var hits = 0; //17hits
+var hitSound = new Audio('sounds/Explosion.wav');
+var missSound = new Audio('sounds/Waterff.wav');
 var room;
 var enemyloged = false;
 
@@ -235,6 +237,7 @@ socket.on('fired', function(tile) {
 	if ($(id).hasClass('ship-tile')) {
 		$(id).removeClass('ship-tile');
 		$(id).addClass('hit-tile');
+		hitSound.play();
 		socket.emit('hit', { room: room, tile: tile });
 		hits--;
 		if (hits === 0) {
@@ -242,6 +245,7 @@ socket.on('fired', function(tile) {
 			socket.emit('win', { room: room, msg: 'GG!' });
 		}
 	} else {
+		missSound.play();
 		$(id).addClass('missed-tile');
 		socket.emit('miss', { room: room, tile: tile });
 	}
@@ -260,11 +264,13 @@ socket.on('enemy-ready', () => {
 socket.on('hited', function(tile) {
 	var id = '#enemy_' + tile.toString();
 	$(id).addClass('hit-tile');
+	hitSound.play();
 });
 
 socket.on('missed', function(tile) {
 	var id = '#enemy_' + tile.toString();
 	$(id).addClass('missed-tile');
+	missSound.play();
 });
 
 socket.on('won', (data) => alert('You win! \n' + data));
